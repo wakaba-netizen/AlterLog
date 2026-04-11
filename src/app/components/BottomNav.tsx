@@ -19,10 +19,10 @@ export function BottomNav() {
     <nav
       className="fixed bottom-0 left-0 right-0 z-50 flex"
       style={{
-        background: 'rgba(15,20,40,0.95)',
-        backdropFilter: 'blur(12px)',
-        borderTop: '1px solid rgba(167,139,250,0.15)',
+        background: '#0d1225',
+        borderTop: '1px solid rgba(167,139,250,0.4)',
         paddingBottom: 'env(safe-area-inset-bottom)',
+        height: '60px',
       }}
     >
       {TABS.map(({ href, icon, label }) => {
@@ -32,7 +32,7 @@ export function BottomNav() {
             key={href}
             href={href}
             className="flex flex-1 flex-col items-center justify-center py-2 gap-0.5 transition-all"
-            style={{ color: active ? '#a78bfa' : 'rgba(148,163,184,0.6)' }}
+            style={{ color: active ? '#a78bfa' : '#94a3b8' }}
           >
             <span className="text-xl">{icon}</span>
             <span className="text-[10px] tracking-wide">{label}</span>
