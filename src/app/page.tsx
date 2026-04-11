@@ -68,6 +68,8 @@ export default function Home() {
     setAppState('idle')
   }, [resetRecorder])
 
+  const isLoading = appState === 'loading'
+
   if (appState === 'loading') {
     return (
       <main style={{ background: BG, minHeight: '100dvh' }}>
@@ -100,7 +102,7 @@ export default function Home() {
         <RecordButton
           isRecording={isRecording}
           onToggle={handleToggleRecord}
-          disabled={appState === 'loading'}
+          disabled={isLoading}
         />
       </div>
 
