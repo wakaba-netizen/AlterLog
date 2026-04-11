@@ -5,11 +5,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const TABS = [
-  { href: '/',          icon: '🎙️', label: '録音' },
-  { href: '/history',   icon: '📋', label: '履歴' },
-  { href: '/chat',      icon: '🤖', label: 'コーチ' },
-  { href: '/report',    icon: '📊', label: 'レポート' },
-  { href: '/capsule',   icon: '💌', label: '手紙' },
+  { href: '/',        icon: '🎙️', label: '録音' },
+  { href: '/history', icon: '📋', label: '履歴' },
+  { href: '/chat',    icon: '🤖', label: 'コーチ' },
+  { href: '/report',  icon: '📊', label: 'レポート' },
+  { href: '/capsule', icon: '💌', label: '手紙' },
 ] as const
 
 export function BottomNav() {
@@ -17,12 +17,16 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 flex"
       style={{
-        background: '#0d1225',
-        borderTop: '1px solid rgba(167,139,250,0.4)',
-        paddingBottom: 'env(safe-area-inset-bottom)',
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 9999,
+        display: 'flex',
         height: '60px',
+        background: '#0d1225',
+        borderTop: '2px solid #a78bfa',
       }}
     >
       {TABS.map(({ href, icon, label }) => {
@@ -31,11 +35,19 @@ export function BottomNav() {
           <Link
             key={href}
             href={href}
-            className="flex flex-1 flex-col items-center justify-center py-2 gap-0.5 transition-all"
-            style={{ color: active ? '#a78bfa' : '#94a3b8' }}
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '2px',
+              textDecoration: 'none',
+              color: active ? '#a78bfa' : '#94a3b8',
+            }}
           >
-            <span className="text-xl">{icon}</span>
-            <span className="text-[10px] tracking-wide">{label}</span>
+            <span style={{ fontSize: '20px', lineHeight: 1 }}>{icon}</span>
+            <span style={{ fontSize: '10px', letterSpacing: '0.05em' }}>{label}</span>
           </Link>
         )
       })}
