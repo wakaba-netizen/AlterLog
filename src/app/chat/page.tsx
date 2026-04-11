@@ -58,23 +58,29 @@ export default function ChatPage() {
   }
 
   return (
-    <main className="fixed inset-0 flex flex-col" style={{ background: BG, paddingBottom: '64px' }}>
+    <main style={{
+      position: 'fixed',
+      inset: 0,
+      bottom: '60px',
+      display: 'flex',
+      flexDirection: 'column',
+      background: BG,
+    }}>
       {/* Header */}
-      <div className="px-6 pt-12 pb-3 shrink-0 flex items-center justify-between">
-        <p className="text-xs text-purple-400 tracking-[0.35em] uppercase">AI コーチ</p>
+      <div style={{ padding: '48px 24px 12px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <p style={{ fontSize: '11px', color: '#a78bfa', letterSpacing: '0.35em', textTransform: 'uppercase', margin: 0 }}>AI コーチ</p>
         <a
           href="/knowledge"
-          className="text-xs text-cyan-400 px-3 py-1 rounded-full"
-          style={{ background: 'rgba(103,232,249,0.1)' }}
+          style={{ fontSize: '12px', color: '#67e8f9', padding: '4px 12px', borderRadius: '9999px', background: 'rgba(103,232,249,0.1)', textDecoration: 'none' }}
         >
           📚 学習フィルター
         </a>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-2 flex flex-col gap-3">
+      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {messages.length === 0 && !sending && (
-          <div className="flex-1 flex items-center justify-center text-center text-slate-500 text-sm px-8 py-16">
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: '#64748b', fontSize: '14px', padding: '64px 32px' }}>
             過去のジャーナルを踏まえて、<br />何でも聞いてください。
           </div>
         )}
@@ -88,29 +94,44 @@ export default function ChatPage() {
       </div>
 
       {/* Input */}
-      <div
-        className="shrink-0 px-4 py-3 flex gap-2"
-        style={{ borderTop: '1px solid rgba(167,139,250,0.1)' }}
-      >
+      <div style={{ flexShrink: 0, padding: '12px 16px', display: 'flex', gap: '8px', borderTop: '1px solid rgba(167,139,250,0.1)' }}>
         <input
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
           placeholder="今、何を考えていますか？"
           disabled={sending}
-          className="flex-1 rounded-full px-4 py-2.5 text-sm text-slate-200 outline-none disabled:opacity-40"
           style={{
+            flex: 1,
+            borderRadius: '9999px',
+            padding: '10px 16px',
+            fontSize: '14px',
+            color: '#e2e8f0',
+            outline: 'none',
             background: 'rgba(167,139,250,0.1)',
             border: '1px solid rgba(167,139,250,0.2)',
+            opacity: sending ? 0.4 : 1,
           }}
         />
         <button
           onClick={send}
           disabled={!input.trim() || sending}
-          className="w-10 h-10 rounded-full flex items-center justify-center disabled:opacity-30 transition-opacity"
-          style={{ background: 'rgba(167,139,250,0.3)' }}
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '9999px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(167,139,250,0.3)',
+            border: 'none',
+            cursor: 'pointer',
+            opacity: (!input.trim() || sending) ? 0.3 : 1,
+            fontSize: '18px',
+            color: 'white',
+          }}
         >
-          <span className="text-lg">↑</span>
+          ↑
         </button>
       </div>
     </main>
