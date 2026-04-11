@@ -23,8 +23,8 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
       onClick={() => onClick(entry)}
       className="w-full text-left rounded-2xl p-4 transition-all active:scale-98"
       style={{
-        background: 'rgba(167,139,250,0.06)',
-        border: '1px solid rgba(167,139,250,0.15)',
+        background: 'rgba(0,84,167,0.06)',
+        border: '1px solid rgba(0,84,167,0.2)',
       }}
     >
       <div className="flex items-center justify-between mb-2">
@@ -36,7 +36,7 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
           感情 {entry.emotion_ratio}%
         </span>
       </div>
-      <p className="text-purple-300 text-sm font-medium mb-1">{entry.thinking_profile}</p>
+      <p className="text-sm font-medium mb-1" style={{ color: '#0075c2' }}>{entry.thinking_profile}</p>
       <p className="text-slate-400 text-xs line-clamp-2">{entry.transcript}</p>
     </button>
   )

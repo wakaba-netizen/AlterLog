@@ -7,7 +7,7 @@ import {
   getKnowledgeSources, type KnowledgeSource, type KnowledgeInsight
 } from '@/app/actions/knowledge'
 
-const BG = 'linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+const BG = 'linear-gradient(160deg, #0a1628 0%, #1c3450 50%, #0054a7 100%)'
 
 export default function KnowledgePage() {
   const [url, setUrl] = useState('')
@@ -50,7 +50,7 @@ export default function KnowledgePage() {
       className="min-h-dvh flex flex-col px-4 pt-12 pb-24"
       style={{ background: BG }}
     >
-      <p className="text-xs text-purple-400 tracking-[0.35em] uppercase mb-6">学習フィルター</p>
+      <p className="text-xs tracking-[0.35em] uppercase mb-6" style={{ color: '#0075c2' }}>学習フィルター</p>
 
       {/* URL Input */}
       <div className="flex gap-2 mb-6">
@@ -62,15 +62,15 @@ export default function KnowledgePage() {
           disabled={loading}
           className="flex-1 rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none disabled:opacity-40"
           style={{
-            background: 'rgba(167,139,250,0.1)',
-            border: '1px solid rgba(167,139,250,0.2)',
+            background: 'rgba(0,84,167,0.1)',
+            border: '1px solid rgba(0,84,167,0.2)',
           }}
         />
         <button
           onClick={handleAddUrl}
           disabled={!url.trim() || loading}
-          className="px-4 py-2.5 rounded-xl text-sm text-purple-300 disabled:opacity-30 transition-opacity"
-          style={{ background: 'rgba(167,139,250,0.2)' }}
+          className="px-4 py-2.5 rounded-xl text-sm disabled:opacity-30 transition-opacity"
+          style={{ background: 'rgba(0,117,194,0.2)', color: '#0075c2' }}
         >
           {loading ? '…' : '追加'}
         </button>
@@ -84,9 +84,9 @@ export default function KnowledgePage() {
       {insight && (
         <div
           className="rounded-2xl p-4 mb-6 flex flex-col gap-3"
-          style={{ background: 'rgba(103,232,249,0.06)', border: '1px solid rgba(103,232,249,0.2)' }}
+          style={{ background: 'rgba(235,97,104,0.08)', border: '1px solid rgba(235,97,104,0.3)' }}
         >
-          <p className="text-cyan-300 font-bold">{insight.lessonTitle}</p>
+          <p className="font-bold" style={{ color: '#eb6168' }}>{insight.lessonTitle}</p>
           <div>
             <p className="text-xs text-slate-500 mb-1">教訓</p>
             <p className="text-slate-200 text-sm leading-relaxed">{insight.lesson}</p>
@@ -97,9 +97,9 @@ export default function KnowledgePage() {
           </div>
           <div
             className="rounded-xl p-3"
-            style={{ background: 'rgba(167,139,250,0.1)' }}
+            style={{ background: 'rgba(0,84,167,0.1)' }}
           >
-            <p className="text-xs text-purple-400 mb-1">明日からのアクション</p>
+            <p className="text-xs mb-1" style={{ color: '#0075c2' }}>明日からのアクション</p>
             <p className="text-slate-200 text-sm">{insight.action}</p>
           </div>
         </div>
@@ -111,15 +111,15 @@ export default function KnowledgePage() {
           <div
             key={s.id}
             className="rounded-2xl p-4"
-            style={{ background: 'rgba(167,139,250,0.04)', border: '1px solid rgba(167,139,250,0.1)' }}
+            style={{ background: 'rgba(0,84,167,0.1)', border: '1px solid rgba(0,84,167,0.1)' }}
           >
             <p className="text-slate-300 text-sm mb-1 truncate">{s.source}</p>
             <p className="text-slate-500 text-xs mb-3 line-clamp-2">{s.content.slice(0, 100)}…</p>
             <button
               onClick={() => handleSynthesize(s.id)}
               disabled={insightLoading}
-              className="text-xs text-cyan-400 px-3 py-1.5 rounded-full disabled:opacity-30"
-              style={{ background: 'rgba(103,232,249,0.1)' }}
+              className="text-xs px-3 py-1.5 rounded-full disabled:opacity-30"
+              style={{ background: 'rgba(235,97,104,0.1)', color: '#eb6168' }}
             >
               今の自分に合わせて分析
             </button>

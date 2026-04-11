@@ -6,7 +6,7 @@ import { getEntries, type EntryRow } from '@/app/actions/entries'
 import { EntryCard } from '@/app/components/EntryCard'
 import { EntryDetailModal } from '@/app/components/EntryDetailModal'
 
-const BG = 'linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+const BG = 'linear-gradient(160deg, #0a1628 0%, #1c3450 50%, #0054a7 100%)'
 
 export default function HistoryPage() {
   const [entries, setEntries] = useState<EntryRow[]>([])
@@ -22,7 +22,7 @@ export default function HistoryPage() {
       className="min-h-dvh flex flex-col px-4 pt-12 pb-24"
       style={{ background: BG }}
     >
-      <h1 className="text-xs text-purple-400 tracking-[0.35em] uppercase mb-6">
+      <h1 className="text-xs tracking-[0.35em] uppercase mb-6" style={{ color: '#0075c2' }}>
         ジャーナル履歴
       </h1>
 

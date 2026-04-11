@@ -25,8 +25,8 @@ export function BottomNav() {
         zIndex: 9999,
         display: 'flex',
         height: '60px',
-        background: '#0d1225',
-        borderTop: '2px solid #a78bfa',
+        background: '#0a1628',
+        borderTop: '2px solid #0054a7',
       }}
     >
       {TABS.map(({ href, icon, label }) => {
@@ -43,7 +43,7 @@ export function BottomNav() {
               justifyContent: 'center',
               gap: '2px',
               textDecoration: 'none',
-              color: active ? '#a78bfa' : '#94a3b8',
+              color: active ? '#eb6168' : '#94a3b8',
             }}
           >
             <span style={{ fontSize: '20px', lineHeight: 1 }}>{icon}</span>

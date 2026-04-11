@@ -6,7 +6,7 @@ import {
   type TimeCapsule
 } from '@/app/actions/capsule'
 
-const BG = 'linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+const BG = 'linear-gradient(160deg, #0a1628 0%, #1c3450 50%, #0054a7 100%)'
 
 function CapsuleCard({
   capsule,
@@ -25,9 +25,9 @@ function CapsuleCard({
       className="rounded-2xl p-4"
       style={{
         background: canOpen && !capsule.is_opened
-          ? 'rgba(167,139,250,0.12)'
-          : 'rgba(167,139,250,0.04)',
-        border: `1px solid ${canOpen && !capsule.is_opened ? 'rgba(167,139,250,0.4)' : 'rgba(167,139,250,0.1)'}`,
+          ? 'rgba(0,117,194,0.12)'
+          : 'rgba(0,84,167,0.04)',
+        border: `1px solid ${canOpen && !capsule.is_opened ? 'rgba(0,117,194,0.5)' : 'rgba(0,84,167,0.1)'}`,
       }}
     >
       <div className="flex items-start justify-between gap-2">
@@ -49,8 +49,8 @@ function CapsuleCard({
       {!capsule.is_opened && canOpen && (
         <button
           onClick={() => onOpen(capsule)}
-          className="mt-3 w-full py-2 rounded-xl text-sm text-purple-300 transition-all"
-          style={{ background: 'rgba(167,139,250,0.2)' }}
+          className="mt-3 w-full py-2 rounded-xl text-sm transition-all"
+          style={{ background: 'rgba(0,117,194,0.2)', color: '#0075c2' }}
         >
           開封する
         </button>
@@ -108,11 +108,11 @@ export default function CapsulePage() {
       style={{ background: BG }}
     >
       <div className="flex items-center justify-between mb-6">
-        <p className="text-xs text-purple-400 tracking-[0.35em] uppercase">タイムカプセル</p>
+        <p className="text-xs tracking-[0.35em] uppercase" style={{ color: '#0075c2' }}>タイムカプセル</p>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="text-xs text-purple-300 px-3 py-1.5 rounded-full"
-          style={{ background: 'rgba(167,139,250,0.15)' }}
+          className="text-xs px-3 py-1.5 rounded-full"
+          style={{ background: 'rgba(0,117,194,0.15)', color: '#0075c2' }}
         >
           + 手紙を書く
         </button>
@@ -121,14 +121,14 @@ export default function CapsulePage() {
       {showForm && (
         <div
           className="rounded-2xl p-4 mb-6 flex flex-col gap-3"
-          style={{ background: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.2)' }}
+          style={{ background: 'rgba(0,84,167,0.08)', border: '1px solid rgba(0,84,167,0.2)' }}
         >
           <input
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="タイトル（例：半年後の自分へ）"
             className="rounded-xl px-3 py-2 text-sm text-slate-200 outline-none w-full"
-            style={{ background: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.2)' }}
+            style={{ background: 'rgba(0,84,167,0.1)', border: '1px solid rgba(0,84,167,0.2)' }}
           />
           <textarea
             value={content}
@@ -136,7 +136,7 @@ export default function CapsulePage() {
             placeholder="未来の自分へのメッセージ…"
             rows={4}
             className="rounded-xl px-3 py-2 text-sm text-slate-200 outline-none w-full resize-none"
-            style={{ background: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.2)' }}
+            style={{ background: 'rgba(0,84,167,0.1)', border: '1px solid rgba(0,84,167,0.2)' }}
           />
           <div className="flex items-center gap-2">
             <label className="text-xs text-slate-400">開封日</label>
@@ -146,14 +146,14 @@ export default function CapsulePage() {
               onChange={e => setOpenAt(e.target.value)}
               min={new Date().toISOString().slice(0, 10)}
               className="flex-1 rounded-xl px-3 py-2 text-sm text-slate-200 outline-none"
-              style={{ background: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.2)' }}
+              style={{ background: 'rgba(0,84,167,0.1)', border: '1px solid rgba(0,84,167,0.2)' }}
             />
           </div>
           <button
             onClick={handleCreate}
             disabled={saving || !title.trim() || !content.trim()}
             className="py-2.5 rounded-xl text-sm text-white disabled:opacity-40 transition-opacity"
-            style={{ background: 'rgba(167,139,250,0.3)' }}
+            style={{ background: 'rgba(0,84,167,0.4)' }}
           >
             {saving ? '保存中…' : '封印する'}
           </button>

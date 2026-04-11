@@ -28,14 +28,14 @@ export function MetricsChart({ data }: MetricsChartProps) {
         <Tooltip
           contentStyle={{
             background: '#1a1a2e',
-            border: '1px solid rgba(167,139,250,0.3)',
+            border: '1px solid rgba(0,84,167,0.4)',
             borderRadius: 8,
             color: '#e2e8f0',
             fontSize: 12,
           }}
         />
         <Legend wrapperStyle={{ fontSize: 11, color: '#94a3b8' }} />
-        <Line type="monotone" dataKey="fact" name="事実" stroke="#67e8f9" strokeWidth={2} dot={false} />
+        <Line type="monotone" dataKey="fact" name="事実" stroke="#0075c2" strokeWidth={2} dot={false} />
         <Line type="monotone" dataKey="emotion" name="感情" stroke="#f472b6" strokeWidth={2} dot={false} />
         <Line type="monotone" dataKey="passive" name="被害者" stroke="#fb923c" strokeWidth={2} dot={false} />
       </LineChart>

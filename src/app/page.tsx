@@ -12,7 +12,7 @@ import { getCTA } from '@/app/utils/cta'
 
 type AppState = 'idle' | 'recording' | 'loading' | 'result'
 
-const BG = 'linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+const BG = 'linear-gradient(160deg, #0a1628 0%, #1c3450 50%, #0054a7 100%)'
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('idle')
@@ -100,7 +100,7 @@ export default function Home() {
       className="flex flex-col items-center justify-between py-12 px-6"
     >
       {/* Logo */}
-      <span className="text-xs text-purple-400 tracking-[0.35em] uppercase select-none">
+      <span className="text-xs tracking-[0.35em] uppercase select-none" style={{ color: '#eb6168' }}>
         AlterLog
       </span>
 

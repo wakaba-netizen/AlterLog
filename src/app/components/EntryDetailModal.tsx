@@ -8,7 +8,7 @@ interface EntryDetailModalProps {
   onClose: () => void
 }
 
-const BG = 'linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+const BG = 'linear-gradient(160deg, #0a1628 0%, #1c3450 50%, #0054a7 100%)'
 
 export function EntryDetailModal({ entry, onClose }: EntryDetailModalProps) {
   if (!entry) return null
@@ -40,7 +40,7 @@ export function EntryDetailModal({ entry, onClose }: EntryDetailModalProps) {
         <h2
           className="text-3xl font-bold leading-tight"
           style={{
-            background: 'linear-gradient(135deg, #a78bfa, #67e8f9)',
+            background: 'linear-gradient(135deg, #0054a7, #0075c2)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
@@ -51,7 +51,7 @@ export function EntryDetailModal({ entry, onClose }: EntryDetailModalProps) {
         {/* Metrics */}
         <div className="flex flex-col gap-2">
           {[
-            { label: '事実', value: entry.fact_ratio, color: '#67e8f9' },
+            { label: '事実', value: entry.fact_ratio, color: '#0075c2' },
             { label: '感情', value: entry.emotion_ratio, color: '#f472b6' },
             { label: '被害者モード', value: entry.passive_ratio, color: '#fb923c' },
           ].map(({ label, value, color }) => (
@@ -71,9 +71,9 @@ export function EntryDetailModal({ entry, onClose }: EntryDetailModalProps) {
         {/* AI Comment */}
         <div
           className="rounded-2xl p-4"
-          style={{ background: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.2)' }}
+          style={{ background: 'rgba(0,84,167,0.08)', border: '1px solid rgba(0,84,167,0.2)' }}
         >
-          <p className="text-xs text-purple-400 mb-2">ALTERLOGの診断</p>
+          <p className="text-xs mb-2" style={{ color: '#0075c2' }}>ALTERLOGの診断</p>
           <p className="text-slate-200 text-sm leading-relaxed">{entry.ai_comment}</p>
         </div>
 

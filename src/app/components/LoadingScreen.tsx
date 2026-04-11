@@ -21,7 +21,7 @@ export function LoadingScreen() {
             style={{
               width: 12,
               height: h,
-              background: '#a78bfa',
+              background: '#0075c2',
               animation: `alterlog-breathe-bar 3s ease-in-out infinite`,
               animationDelay: `${i * 0.1}s`,
             }}
@@ -42,7 +42,7 @@ export function LoadingScreen() {
         {STEPS.map((step, i) => (
           <div key={i} className="flex items-center gap-3 text-xs">
             <span className={
-              step.done   ? 'text-purple-400' :
+              step.done   ? 'text-blue-400' :
               step.active ? 'text-slate-200'  : 'text-slate-600'
             }>
               {step.done ? '✓' : step.active ? '●' : '○'}
