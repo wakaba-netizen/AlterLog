@@ -50,7 +50,7 @@ export default function KnowledgePage() {
       className="min-h-dvh flex flex-col px-4 pt-12 pb-24"
       style={{ background: BG }}
     >
-      <p className="text-xs tracking-[0.35em] uppercase mb-6" style={{ color: '#0075c2' }}>学習フィルター</p>
+      <p className="text-xs tracking-[0.35em] uppercase mb-6" style={{ color: '#4db8ff' }}>学習フィルター</p>
 
       {/* URL Input */}
       <div className="flex gap-2 mb-6">
@@ -60,10 +60,11 @@ export default function KnowledgePage() {
           onKeyDown={e => e.key === 'Enter' && handleAddUrl()}
           placeholder="記事やWebページのURL"
           disabled={loading}
-          className="flex-1 rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none disabled:opacity-40"
+          className="flex-1 rounded-xl px-4 py-2.5 text-sm outline-none disabled:opacity-40"
           style={{
             background: 'rgba(0,84,167,0.1)',
             border: '1px solid rgba(0,84,167,0.2)',
+            color: '#c8e0f4',
           }}
         />
         <button
@@ -78,7 +79,7 @@ export default function KnowledgePage() {
 
       {/* Insight */}
       {insightLoading && (
-        <div className="text-slate-500 text-sm text-center py-4">分析中…</div>
+        <div className="text-sm text-center py-4" style={{ color: '#5a9abf' }}>分析中…</div>
       )}
 
       {insight && (
@@ -88,19 +89,19 @@ export default function KnowledgePage() {
         >
           <p className="font-bold" style={{ color: '#eb6168' }}>{insight.lessonTitle}</p>
           <div>
-            <p className="text-xs text-slate-500 mb-1">教訓</p>
-            <p className="text-slate-200 text-sm leading-relaxed">{insight.lesson}</p>
+            <p className="text-xs mb-1" style={{ color: '#5a9abf' }}>教訓</p>
+            <p className="text-sm leading-relaxed" style={{ color: '#c8e0f4' }}>{insight.lesson}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-500 mb-1">あなたへの繋がり</p>
-            <p className="text-slate-200 text-sm leading-relaxed">{insight.connection}</p>
+            <p className="text-xs mb-1" style={{ color: '#5a9abf' }}>あなたへの繋がり</p>
+            <p className="text-sm leading-relaxed" style={{ color: '#c8e0f4' }}>{insight.connection}</p>
           </div>
           <div
             className="rounded-xl p-3"
             style={{ background: 'rgba(0,84,167,0.1)' }}
           >
-            <p className="text-xs mb-1" style={{ color: '#0075c2' }}>明日からのアクション</p>
-            <p className="text-slate-200 text-sm">{insight.action}</p>
+            <p className="text-xs mb-1" style={{ color: '#4db8ff' }}>明日からのアクション</p>
+            <p className="text-sm" style={{ color: '#c8e0f4' }}>{insight.action}</p>
           </div>
         </div>
       )}
@@ -113,8 +114,8 @@ export default function KnowledgePage() {
             className="rounded-2xl p-4"
             style={{ background: 'rgba(0,84,167,0.1)', border: '1px solid rgba(0,84,167,0.1)' }}
           >
-            <p className="text-slate-300 text-sm mb-1 truncate">{s.source}</p>
-            <p className="text-slate-500 text-xs mb-3 line-clamp-2">{s.content.slice(0, 100)}…</p>
+            <p className="text-sm mb-1 truncate" style={{ color: '#a8c8e0' }}>{s.source}</p>
+            <p className="text-xs mb-3 line-clamp-2" style={{ color: '#5a9abf' }}>{s.content.slice(0, 100)}…</p>
             <button
               onClick={() => handleSynthesize(s.id)}
               disabled={insightLoading}

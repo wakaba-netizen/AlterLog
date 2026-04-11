@@ -115,9 +115,9 @@ export default function Home() {
       </div>
 
       {/* CTA text */}
-      <p className="text-slate-400 text-sm text-center leading-relaxed min-h-[40px] flex items-center">
+      <p className="text-sm text-center leading-relaxed min-h-[40px] flex items-center" style={{ color: '#7aafd4' }}>
         {error
-          ? <span className="text-red-400">{error}</span>
+          ? <span style={{ color: '#eb6168' }}>{error}</span>
           : isRecording && !canStop
           ? '🎙️ 録音中… (少し待ってから止めてね)'
           : isRecording

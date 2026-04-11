@@ -28,7 +28,7 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
       }}
     >
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-slate-400">{dateStr} {timeStr}</span>
+        <span className="text-xs" style={{ color: '#5a9abf' }}>{dateStr} {timeStr}</span>
         <span
           className="text-xs font-bold px-2 py-0.5 rounded-full"
           style={{ background: `${emotionColor}22`, color: emotionColor }}
@@ -36,8 +36,8 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
           感情 {entry.emotion_ratio}%
         </span>
       </div>
-      <p className="text-sm font-medium mb-1" style={{ color: '#0075c2' }}>{entry.thinking_profile}</p>
-      <p className="text-slate-400 text-xs line-clamp-2">{entry.transcript}</p>
+      <p className="text-sm font-medium mb-1" style={{ color: '#4db8ff' }}>{entry.thinking_profile}</p>
+      <p className="text-xs line-clamp-2" style={{ color: '#7aafd4' }}>{entry.transcript}</p>
     </button>
   )
 }

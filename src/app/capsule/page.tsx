@@ -32,8 +32,8 @@ function CapsuleCard({
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1">
-          <p className="text-purple-300 font-medium text-sm mb-1">{capsule.title}</p>
-          <p className="text-xs text-slate-500">
+          <p className="font-medium text-sm mb-1" style={{ color: '#c8e0f4' }}>{capsule.title}</p>
+          <p className="text-xs" style={{ color: '#5a9abf' }}>
             {openAt.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' })} に開封
           </p>
         </div>
@@ -41,7 +41,7 @@ function CapsuleCard({
       </div>
 
       {capsule.is_opened && (
-        <p className="mt-3 text-slate-300 text-sm leading-relaxed border-t border-white/10 pt-3">
+        <p className="mt-3 text-sm leading-relaxed border-t border-white/10 pt-3" style={{ color: '#c8e0f4' }}>
           {capsule.content}
         </p>
       )}
@@ -50,14 +50,14 @@ function CapsuleCard({
         <button
           onClick={() => onOpen(capsule)}
           className="mt-3 w-full py-2 rounded-xl text-sm transition-all"
-          style={{ background: 'rgba(0,117,194,0.2)', color: '#0075c2' }}
+          style={{ background: 'rgba(0,117,194,0.2)', color: '#4db8ff' }}
         >
           開封する
         </button>
       )}
 
       {!capsule.is_opened && !canOpen && (
-        <p className="mt-2 text-xs text-slate-500">あと {daysLeft} 日</p>
+        <p className="mt-2 text-xs" style={{ color: '#5a9abf' }}>あと {daysLeft} 日</p>
       )}
     </div>
   )
@@ -108,11 +108,11 @@ export default function CapsulePage() {
       style={{ background: BG }}
     >
       <div className="flex items-center justify-between mb-6">
-        <p className="text-xs tracking-[0.35em] uppercase" style={{ color: '#0075c2' }}>タイムカプセル</p>
+        <p className="text-xs tracking-[0.35em] uppercase" style={{ color: '#4db8ff' }}>タイムカプセル</p>
         <button
           onClick={() => setShowForm(!showForm)}
           className="text-xs px-3 py-1.5 rounded-full"
-          style={{ background: 'rgba(0,117,194,0.15)', color: '#0075c2' }}
+          style={{ background: 'rgba(0,117,194,0.15)', color: '#4db8ff' }}
         >
           + 手紙を書く
         </button>
@@ -127,33 +127,33 @@ export default function CapsulePage() {
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="タイトル（例：半年後の自分へ）"
-            className="rounded-xl px-3 py-2 text-sm text-slate-200 outline-none w-full"
-            style={{ background: 'rgba(0,84,167,0.1)', border: '1px solid rgba(0,84,167,0.2)' }}
+            className="rounded-xl px-3 py-2 text-sm outline-none w-full"
+            style={{ background: 'rgba(0,84,167,0.1)', border: '1px solid rgba(0,84,167,0.2)', color: '#c8e0f4' }}
           />
           <textarea
             value={content}
             onChange={e => setContent(e.target.value)}
             placeholder="未来の自分へのメッセージ…"
             rows={4}
-            className="rounded-xl px-3 py-2 text-sm text-slate-200 outline-none w-full resize-none"
-            style={{ background: 'rgba(0,84,167,0.1)', border: '1px solid rgba(0,84,167,0.2)' }}
+            className="rounded-xl px-3 py-2 text-sm outline-none w-full resize-none"
+            style={{ background: 'rgba(0,84,167,0.1)', border: '1px solid rgba(0,84,167,0.2)', color: '#c8e0f4' }}
           />
           <div className="flex items-center gap-2">
-            <label className="text-xs text-slate-400">開封日</label>
+            <label className="text-xs" style={{ color: '#7aafd4' }}>開封日</label>
             <input
               type="date"
               value={openAt || defaultOpenAt}
               onChange={e => setOpenAt(e.target.value)}
               min={new Date().toISOString().slice(0, 10)}
-              className="flex-1 rounded-xl px-3 py-2 text-sm text-slate-200 outline-none"
-              style={{ background: 'rgba(0,84,167,0.1)', border: '1px solid rgba(0,84,167,0.2)' }}
+              className="flex-1 rounded-xl px-3 py-2 text-sm outline-none"
+              style={{ background: 'rgba(0,84,167,0.1)', border: '1px solid rgba(0,84,167,0.2)', color: '#c8e0f4' }}
             />
           </div>
           <button
             onClick={handleCreate}
             disabled={saving || !title.trim() || !content.trim()}
-            className="py-2.5 rounded-xl text-sm text-white disabled:opacity-40 transition-opacity"
-            style={{ background: 'rgba(0,84,167,0.4)' }}
+            className="py-2.5 rounded-xl text-sm disabled:opacity-40 transition-opacity"
+            style={{ background: 'rgba(0,84,167,0.4)', color: '#ffffff' }}
           >
             {saving ? '保存中…' : '封印する'}
           </button>
@@ -162,7 +162,7 @@ export default function CapsulePage() {
 
       <div className="flex flex-col gap-3">
         {capsules.length === 0 ? (
-          <p className="text-slate-500 text-sm text-center py-12">
+          <p className="text-sm text-center py-12" style={{ color: '#5a9abf' }}>
             まだタイムカプセルがありません。<br />未来の自分への手紙を書いてみましょう。
           </p>
         ) : (

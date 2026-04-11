@@ -18,7 +18,7 @@ interface MetricBarProps {
 function MetricBar({ label, value, color }: MetricBarProps) {
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs text-slate-400 w-24 flex-shrink-0">{label}</span>
+      <span className="text-xs w-24 flex-shrink-0" style={{ color: '#7aafd4' }}>{label}</span>
       <div className="flex-1 h-2 rounded-full bg-white/10 overflow-hidden">
         <div
           className="h-full rounded-full"
@@ -74,19 +74,20 @@ export function ResultScreen({ result, onReset }: ResultScreenProps) {
         <p className="text-xs uppercase tracking-widest mb-3" style={{ color: '#0075c2' }}>
           AlterLogの診断
         </p>
-        <p className="text-slate-200 text-sm leading-relaxed">{result.ai_comment}</p>
+        <p className="text-sm leading-relaxed" style={{ color: '#c8e0f4' }}>{result.ai_comment}</p>
       </div>
 
       {/* Transcript (collapsible) */}
       <div>
         <button
           onClick={() => setTranscriptOpen((o) => !o)}
-          className="text-xs text-slate-500 flex items-center gap-1 active:text-slate-300 transition-colors"
+          className="text-xs flex items-center gap-1 transition-colors"
+          style={{ color: '#5a9abf' }}
         >
           原文を見る {transcriptOpen ? '▲' : '▼'}
         </button>
         {transcriptOpen && (
-          <p className="mt-3 text-xs text-slate-400 leading-relaxed bg-white/[0.03] rounded-xl p-4">
+          <p className="mt-3 text-xs leading-relaxed bg-white/[0.03] rounded-xl p-4" style={{ color: '#a8c8e0' }}>
             {result.transcript}
           </p>
         )}

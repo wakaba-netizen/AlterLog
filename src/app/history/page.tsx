@@ -22,16 +22,16 @@ export default function HistoryPage() {
       className="min-h-dvh flex flex-col px-4 pt-12 pb-24"
       style={{ background: BG }}
     >
-      <h1 className="text-xs tracking-[0.35em] uppercase mb-6" style={{ color: '#0075c2' }}>
+      <h1 className="text-xs tracking-[0.35em] uppercase mb-6" style={{ color: '#4db8ff' }}>
         ジャーナル履歴
       </h1>
 
       {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-500 text-sm">
+        <div className="flex-1 flex items-center justify-center text-sm" style={{ color: '#5a9abf' }}>
           読み込み中…
         </div>
       ) : entries.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center text-slate-500 text-sm text-center">
+        <div className="flex-1 flex items-center justify-center text-sm text-center" style={{ color: '#5a9abf' }}>
           まだ記録がありません。<br />録音タブから始めましょう。
         </div>
       ) : (

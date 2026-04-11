@@ -26,10 +26,11 @@ export function EntryDetailModal({ entry, onClose }: EntryDetailModalProps) {
     >
       {/* Header */}
       <div className="flex items-center justify-between px-6 pt-12 pb-4">
-        <span className="text-xs text-slate-400">{dateStr}</span>
+        <span className="text-xs" style={{ color: '#5a9abf' }}>{dateStr}</span>
         <button
           onClick={onClose}
-          className="text-slate-400 text-2xl leading-none"
+          className="text-2xl leading-none"
+          style={{ color: '#7aafd4' }}
         >
           ×
         </button>
@@ -56,7 +57,7 @@ export function EntryDetailModal({ entry, onClose }: EntryDetailModalProps) {
             { label: '被害者モード', value: entry.passive_ratio, color: '#fb923c' },
           ].map(({ label, value, color }) => (
             <div key={label} className="flex items-center gap-3">
-              <span className="text-slate-400 text-sm w-24">{label}</span>
+              <span className="text-sm w-24" style={{ color: '#7aafd4' }}>{label}</span>
               <div className="flex-1 h-1.5 rounded-full bg-white/10">
                 <div
                   className="h-full rounded-full transition-all"
@@ -73,14 +74,14 @@ export function EntryDetailModal({ entry, onClose }: EntryDetailModalProps) {
           className="rounded-2xl p-4"
           style={{ background: 'rgba(0,84,167,0.08)', border: '1px solid rgba(0,84,167,0.2)' }}
         >
-          <p className="text-xs mb-2" style={{ color: '#0075c2' }}>ALTERLOGの診断</p>
-          <p className="text-slate-200 text-sm leading-relaxed">{entry.ai_comment}</p>
+          <p className="text-xs mb-2" style={{ color: '#4db8ff' }}>ALTERLOGの診断</p>
+          <p className="text-sm leading-relaxed" style={{ color: '#c8e0f4' }}>{entry.ai_comment}</p>
         </div>
 
         {/* Transcript */}
         <div>
-          <p className="text-xs text-slate-500 mb-2">書き起こし</p>
-          <p className="text-slate-300 text-sm leading-relaxed">{entry.transcript}</p>
+          <p className="text-xs mb-2" style={{ color: '#5a9abf' }}>書き起こし</p>
+          <p className="text-sm leading-relaxed" style={{ color: '#a8c8e0' }}>{entry.transcript}</p>
         </div>
       </div>
     </div>

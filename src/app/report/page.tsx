@@ -29,7 +29,7 @@ export default function ReportPage() {
       className="min-h-dvh flex flex-col px-4 pt-12 pb-24"
       style={{ background: BG }}
     >
-      <p className="text-xs tracking-[0.35em] uppercase mb-6" style={{ color: '#0075c2' }}>回顧録</p>
+      <p className="text-xs tracking-[0.35em] uppercase mb-6" style={{ color: '#4db8ff' }}>回顧録</p>
 
       {/* Period selector */}
       <div
@@ -44,7 +44,7 @@ export default function ReportPage() {
             className="px-5 py-1.5 rounded-full text-sm transition-all"
             style={{
               background: period === p ? 'rgba(0,117,194,0.3)' : 'transparent',
-              color: period === p ? '#0075c2' : '#64748b',
+              color: period === p ? '#4db8ff' : '#5a9abf',
             }}
           >
             {p === 'week' ? '1週間' : '1ヶ月'}
@@ -56,14 +56,14 @@ export default function ReportPage() {
         <button
           onClick={() => load(period)}
           className="self-start px-6 py-3 rounded-full text-sm transition-all"
-          style={{ background: 'rgba(0,117,194,0.15)', border: '1px solid rgba(0,117,194,0.3)', color: '#0075c2' }}
+          style={{ background: 'rgba(0,117,194,0.15)', border: '1px solid rgba(0,117,194,0.3)', color: '#4db8ff' }}
         >
           レポートを生成
         </button>
       )}
 
       {loading && (
-        <div className="flex-1 flex items-center justify-center text-slate-500 text-sm">
+        <div className="flex-1 flex items-center justify-center text-sm" style={{ color: '#5a9abf' }}>
           分析中…
         </div>
       )}
@@ -82,7 +82,7 @@ export default function ReportPage() {
                 className="rounded-2xl p-3 text-center"
                 style={{ background: 'rgba(0,84,167,0.06)', border: '1px solid rgba(0,84,167,0.15)' }}
               >
-                <p className="text-xs text-slate-500 mb-1">{label}</p>
+                <p className="text-xs mb-1" style={{ color: '#5a9abf' }}>{label}</p>
                 <p className="font-bold text-lg" style={{ color }}>{value}</p>
               </div>
             ))}
@@ -94,7 +94,7 @@ export default function ReportPage() {
               className="rounded-2xl p-4"
               style={{ background: 'rgba(0,84,167,0.04)', border: '1px solid rgba(0,84,167,0.1)' }}
             >
-              <p className="text-xs text-slate-500 mb-3">思考パターン推移</p>
+              <p className="text-xs mb-3" style={{ color: '#5a9abf' }}>思考パターン推移</p>
               <MetricsChart data={report.trend} />
             </div>
           )}
@@ -104,19 +104,19 @@ export default function ReportPage() {
             className="rounded-2xl p-4"
             style={{ background: 'rgba(0,84,167,0.08)', border: '1px solid rgba(0,84,167,0.2)' }}
           >
-            <p className="text-xs mb-2" style={{ color: '#0075c2' }}>この期間の総括</p>
-            <p className="text-slate-200 text-sm leading-relaxed">{report.summary}</p>
+            <p className="text-xs mb-2" style={{ color: '#4db8ff' }}>この期間の総括</p>
+            <p className="text-sm leading-relaxed" style={{ color: '#c8e0f4' }}>{report.summary}</p>
           </div>
 
           {/* Growth Points */}
           {report.growthPoints.length > 0 && (
             <div>
-              <p className="text-xs text-slate-500 mb-2">成長ポイント</p>
+              <p className="text-xs mb-2" style={{ color: '#5a9abf' }}>成長ポイント</p>
               <div className="flex flex-col gap-2">
                 {report.growthPoints.map((point, i) => (
                   <div key={i} className="flex gap-2 items-start">
-                    <span className="text-green-400 text-sm mt-0.5">✓</span>
-                    <p className="text-slate-300 text-sm leading-relaxed">{point}</p>
+                    <span className="text-sm mt-0.5" style={{ color: '#7ec9af' }}>✓</span>
+                    <p className="text-sm leading-relaxed" style={{ color: '#a8c8e0' }}>{point}</p>
                   </div>
                 ))}
               </div>
@@ -128,8 +128,8 @@ export default function ReportPage() {
             className="rounded-2xl p-4"
             style={{ background: 'rgba(251,146,60,0.08)', border: '1px solid rgba(251,146,60,0.2)' }}
           >
-            <p className="text-xs text-orange-400 mb-2">次のチャレンジ</p>
-            <p className="text-slate-200 text-sm leading-relaxed">{report.nextChallenge}</p>
+            <p className="text-xs mb-2" style={{ color: '#fb923c' }}>次のチャレンジ</p>
+            <p className="text-sm leading-relaxed" style={{ color: '#c8e0f4' }}>{report.nextChallenge}</p>
           </div>
         </div>
       )}
