@@ -3,6 +3,8 @@
 import OpenAI from 'openai'
 import { getSupabaseClient } from '@/lib/supabase'
 
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+
 export interface AnalysisResult {
   id: string
   transcript: string
@@ -38,8 +40,6 @@ const SYSTEM_PROMPT = `あなたは「AlterLog」というアプリの分析AI�
 export async function transcribeAndAnalyze(formData: FormData): Promise<AnalysisResult> {
   const audioFile = formData.get('audio') as File | null
   if (!audioFile) throw new Error('音声データがありません')
-
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
   const transcription = await openai.audio.transcriptions.create({
     file: audioFile,
