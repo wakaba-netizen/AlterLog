@@ -18,14 +18,14 @@ export function RecordButton({ isRecording, onToggle, disabled }: RecordButtonPr
       style={{
         width: 96,
         height: 96,
-        border: `2px solid ${isRecording ? 'rgba(239,68,68,0.7)' : 'rgba(167,139,250,0.5)'}`,
-        background: isRecording ? 'rgba(239,68,68,0.12)' : 'rgba(167,139,250,0.12)',
+        border: `2px solid ${isRecording ? 'rgba(239,68,68,0.7)' : 'rgba(0,84,167,0.5)'}`,
+        background: isRecording ? 'rgba(239,68,68,0.12)' : 'rgba(0,84,167,0.12)',
       }}
     >
       {/* Outer ripple (idle only) */}
       {!isRecording && (
         <span
-          className="absolute inset-0 rounded-full border border-purple-400/20"
+          className="absolute inset-0 rounded-full border border-blue-600/20"
           style={{ animation: 'alterlog-ripple 2s ease-out infinite' }}
         />
       )}
@@ -38,10 +38,10 @@ export function RecordButton({ isRecording, onToggle, disabled }: RecordButtonPr
           style={{ width: 28, height: 28, animation: 'alterlog-pulse 1s ease-in-out infinite' }}
         />
       ) : (
-        // Record icon: purple breathing circle
+        // Record icon: blue breathing circle
         <span
-          className="rounded-full bg-purple-400"
-          style={{ width: 32, height: 32, animation: 'alterlog-breathe 2.5s ease-in-out infinite' }}
+          className="rounded-full"
+          style={{ width: 32, height: 32, background: '#0054a7', animation: 'alterlog-breathe 2.5s ease-in-out infinite' }}
         />
       )}
     </button>

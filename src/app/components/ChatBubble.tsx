@@ -4,9 +4,10 @@
 interface ChatBubbleProps {
   role: 'user' | 'assistant'
   content: string
+  tone?: 'normal' | 'warning'
 }
 
-export function ChatBubble({ role, content }: ChatBubbleProps) {
+export function ChatBubble({ role, content, tone }: ChatBubbleProps) {
   const isUser = role === 'user'
 
   return (
@@ -21,14 +22,14 @@ export function ChatBubble({ role, content }: ChatBubbleProps) {
                 color: '#e2e8f0',
               }
             : {
-                background: 'rgba(15,52,96,0.6)',
-                border: '1px solid rgba(235,97,104,0.25)',
+                background: 'rgba(0,84,167,0.07)',
+                border: `1px solid ${tone === 'warning' ? 'rgba(235,97,104,0.5)' : 'rgba(0,84,167,0.2)'}`,
                 color: '#cbd5e1',
               }
         }
       >
         {!isUser && (
-          <p style={{ fontSize: '11px', color: '#d6003A', marginBottom: '4px', fontWeight: 'bold', letterSpacing: '0.1em' }}>T</p>
+          <p style={{ fontSize: '11px', color: tone === 'warning' ? '#eb6168' : '#d6003A', marginBottom: '4px', fontWeight: 'bold', letterSpacing: '0.1em' }}>T</p>
         )}
         {content}
       </div>

@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { generateReport, type ReportData } from '@/app/actions/report'
 import { MetricsChart } from '@/app/components/MetricsChart'
 
-const BG = 'linear-gradient(160deg, #0a1628 0%, #1c3450 50%, #0054a7 100%)'
+const BG = 'linear-gradient(160deg, #000811 0%, #001525 60%, #002040 100%)'
 
 export default function ReportPage() {
   const [period, setPeriod] = useState<'week' | 'month'>('week')

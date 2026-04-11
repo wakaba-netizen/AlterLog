@@ -24,7 +24,7 @@ export function Waveform({ analyserNode, isRecording }: WaveformProps) {
       barsRef.current.forEach((bar, i) => {
         if (!bar) return
         bar.style.height = `${IDLE_HEIGHTS[i]}px`
-        bar.style.background = '#a78bfa'
+        bar.style.background = '#0054a7'
         bar.style.opacity = '0.5'
       })
       return
@@ -56,11 +56,11 @@ export function Waveform({ analyserNode, isRecording }: WaveformProps) {
         bar.style.height = `${h}px`
         bar.style.opacity = (0.4 + n * 0.6).toString()
 
-        // Color: low energy → purple (#a78bfa), high energy → cyan (#38bdf8)
-        // Interpolate RGB: purple(167,139,250) → cyan(56,189,248)
-        const r = Math.round(167 + n * (56 - 167))
-        const g = Math.round(139 + n * (189 - 139))
-        const b = Math.round(250 + n * (248 - 250))
+        // Color: low energy → primary blue (#0054a7), high energy → secondary blue (#0075c2)
+        // Interpolate RGB: primary(0,84,167) → secondary(0,117,194)
+        const r = Math.round(0 + n * (0 - 0))
+        const g = Math.round(84 + n * (117 - 84))
+        const b = Math.round(167 + n * (194 - 167))
         bar.style.background = `rgb(${r},${g},${b})`
       })
     }
@@ -83,7 +83,7 @@ export function Waveform({ analyserNode, isRecording }: WaveformProps) {
           style={{
             width: '12px',
             height: `${IDLE_HEIGHTS[i]}px`,
-            background: '#a78bfa',
+            background: '#0054a7',
             opacity: 0.5,
             transformOrigin: 'bottom',
           }}

@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { sendChatMessage, getChatHistory, type ChatMessage } from '@/app/actions/chat'
 import { ChatBubble } from '@/app/components/ChatBubble'
 
-const BG = 'linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+const BG = 'linear-gradient(160deg, #000811 0%, #001525 60%, #002040 100%)'
 const SESSION_KEY = 'alterlog_chat_session'
 
 export default function ChatPage() {
@@ -22,6 +22,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
+  const [warningFlash, setWarningFlash] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -50,6 +51,11 @@ export default function ChatPage() {
     try {
       const reply = await sendChatMessage(sessionId, text)
       setMessages(prev => [...prev, reply])
+      // 警告フラッシュ演出
+      if (reply.tone === 'warning') {
+        setWarningFlash(true)
+        setTimeout(() => setWarningFlash(false), 1200)
+      }
     } catch {
       setMessages(prev => prev.filter(m => m.id !== optimistic.id))
     } finally {
@@ -65,13 +71,26 @@ export default function ChatPage() {
       display: 'flex',
       flexDirection: 'column',
       background: BG,
+      overflow: 'hidden',
     }}>
+      {/* 警告フラッシュオーバーレイ */}
+      {warningFlash && (
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(235, 97, 104, 0.18)',
+          zIndex: 100,
+          pointerEvents: 'none',
+          animation: 'none',
+          transition: 'opacity 0.3s',
+        }} />
+      )}
       {/* Header */}
       <div style={{ padding: '48px 24px 12px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <p style={{ fontSize: '18px', color: '#a78bfa', fontWeight: 'bold', letterSpacing: '0.15em', margin: 0 }}>T</p>
+        <p style={{ fontSize: '18px', color: '#d6003A', fontWeight: 'bold', letterSpacing: '0.15em', margin: 0 }}>T</p>
         <a
           href="/knowledge"
-          style={{ fontSize: '12px', color: '#67e8f9', padding: '4px 12px', borderRadius: '9999px', background: 'rgba(103,232,249,0.1)', textDecoration: 'none' }}
+          style={{ fontSize: '12px', color: '#0075c2', padding: '4px 12px', borderRadius: '9999px', background: 'rgba(0,117,194,0.1)', textDecoration: 'none' }}
         >
           📚 学習フィルター
         </a>
@@ -85,7 +104,7 @@ export default function ChatPage() {
           </div>
         )}
         {messages.map(msg => (
-          <ChatBubble key={msg.id} role={msg.role} content={msg.content} />
+          <ChatBubble key={msg.id} role={msg.role} content={msg.content} tone={msg.tone} />
         ))}
         {sending && (
           <ChatBubble role="assistant" content="…" />
@@ -94,7 +113,7 @@ export default function ChatPage() {
       </div>
 
       {/* Input */}
-      <div style={{ flexShrink: 0, padding: '12px 16px', display: 'flex', gap: '8px', borderTop: '1px solid rgba(167,139,250,0.1)' }}>
+      <div style={{ flexShrink: 0, padding: '12px 16px', display: 'flex', gap: '8px', borderTop: '1px solid rgba(0,84,167,0.2)' }}>
         <input
           value={input}
           onChange={e => setInput(e.target.value)}
@@ -108,8 +127,8 @@ export default function ChatPage() {
             fontSize: '14px',
             color: '#e2e8f0',
             outline: 'none',
-            background: 'rgba(167,139,250,0.1)',
-            border: '1px solid rgba(167,139,250,0.2)',
+            background: 'rgba(0,84,167,0.1)',
+            border: '1px solid rgba(0,84,167,0.2)',
             opacity: sending ? 0.4 : 1,
           }}
         />
@@ -123,7 +142,7 @@ export default function ChatPage() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'rgba(167,139,250,0.3)',
+            background: 'rgba(0,84,167,0.3)',
             border: 'none',
             cursor: 'pointer',
             opacity: (!input.trim() || sending) ? 0.3 : 1,

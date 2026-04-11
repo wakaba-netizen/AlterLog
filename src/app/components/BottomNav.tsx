@@ -25,7 +25,7 @@ export function BottomNav() {
         zIndex: 9999,
         display: 'flex',
         height: '60px',
-        background: '#0a1628',
+        background: '#000d1e',
         borderTop: '2px solid #0054a7',
       }}
     >
@@ -43,7 +43,7 @@ export function BottomNav() {
               justifyContent: 'center',
               gap: '2px',
               textDecoration: 'none',
-              color: active ? '#eb6168' : '#94a3b8',
+              color: active ? '#0054a7' : '#3a6a9a',
             }}
           >
             <span style={{ fontSize: '20px', lineHeight: 1 }}>{icon}</span>

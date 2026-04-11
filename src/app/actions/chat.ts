@@ -12,6 +12,7 @@ export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
   created_at: string
+  tone?: 'normal' | 'warning'
 }
 
 export async function sendChatMessage(
@@ -85,6 +86,9 @@ ${triggerInsights || '分析にはもっと記録が必要です'}
   const result = await chat.sendMessage(userMessage)
   const assistantContent = result.response.text()
 
+  // 警告トーン検出（他責・矛盾・被害者モード指摘時）
+  const isWarning = /他責|被害者|責任は自分|矛盾|言い訳|逃げ|志が低|向き合え|クソ|やめろ|変わっていない|変化がない/.test(assistantContent)
+
   // ユーザーメッセージ保存
   await supabase.from('chat_messages').insert({
     session_id: sessionId,
@@ -105,7 +109,7 @@ ${triggerInsights || '分析にはもっと記録が必要です'}
 
   if (error) throw new Error(`チャット保存失敗: ${error.message}`)
 
-  return saved as ChatMessage
+  return { ...(saved as ChatMessage), tone: isWarning ? 'warning' : 'normal' }
 }
 
 export async function getChatHistory(sessionId: string): Promise<ChatMessage[]> {

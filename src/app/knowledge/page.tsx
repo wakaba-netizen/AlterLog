@@ -7,7 +7,7 @@ import {
   getKnowledgeSources, type KnowledgeSource, type KnowledgeInsight
 } from '@/app/actions/knowledge'
 
-const BG = 'linear-gradient(160deg, #0a1628 0%, #1c3450 50%, #0054a7 100%)'
+const BG = 'linear-gradient(160deg, #000811 0%, #001525 60%, #002040 100%)'
 
 export default function KnowledgePage() {
   const [url, setUrl] = useState('')
