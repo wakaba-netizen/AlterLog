@@ -1,7 +1,7 @@
 // src/app/page.tsx
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { Waveform } from '@/app/components/Waveform'
 import { RecordButton } from '@/app/components/RecordButton'
 import { LoadingScreen } from '@/app/components/LoadingScreen'
@@ -18,6 +18,8 @@ export default function Home() {
   const [appState, setAppState] = useState<AppState>('idle')
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [canStop, setCanStop] = useState(false)
+  const canStopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const {
     isRecording,
@@ -53,18 +55,24 @@ export default function Home() {
   const handleToggleRecord = useCallback(async () => {
     if (appState === 'idle') {
       setError(null)
+      setCanStop(false)
       await startRecording()
       setAppState('recording')
-    } else if (appState === 'recording') {
+      // 1.5秒後に停止を許可（誤タップ防止）
+      canStopTimerRef.current = setTimeout(() => setCanStop(true), 1500)
+    } else if (appState === 'recording' && canStop) {
+      if (canStopTimerRef.current) clearTimeout(canStopTimerRef.current)
       stopRecording()
       setAppState('loading') // audioBlob will arrive via useEffect above
     }
-  }, [appState, startRecording, stopRecording])
+  }, [appState, canStop, startRecording, stopRecording])
 
   const handleReset = useCallback(() => {
+    if (canStopTimerRef.current) clearTimeout(canStopTimerRef.current)
     resetRecorder()
     setResult(null)
     setError(null)
+    setCanStop(false)
     setAppState('idle')
   }, [resetRecorder])
 
@@ -110,6 +118,8 @@ export default function Home() {
       <p className="text-slate-400 text-sm text-center leading-relaxed min-h-[40px] flex items-center">
         {error
           ? <span className="text-red-400">{error}</span>
+          : isRecording && !canStop
+          ? '🎙️ 録音中… (少し待ってから止めてね)'
           : isRecording
           ? '話し終わったら、もう一度タップ'
           : getCTA()}

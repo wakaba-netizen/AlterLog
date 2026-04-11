@@ -53,7 +53,7 @@ export async function transcribeAndAnalyze(formData: FormData): Promise<Analysis
     | 'audio/wav'
     | 'audio/ogg'
 
-  const model = genai.getGenerativeModel({ model: 'gemini-2.0-flash' })
+  const model = genai.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
   const result = await model.generateContent([
     { inlineData: { mimeType, data: base64Audio } },
