@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 const TABS = [
   { href: '/',        icon: '🎙️', label: '録音' },
   { href: '/history', icon: '📋', label: '履歴' },
-  { href: '/chat',    icon: '🤖', label: 'コーチ' },
+  { href: '/chat',    icon: '🔮', label: 'T' },
   { href: '/report',  icon: '📊', label: 'レポート' },
   { href: '/capsule', icon: '💌', label: '手紙' },
 ] as const

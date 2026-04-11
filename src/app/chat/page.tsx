@@ -68,7 +68,7 @@ export default function ChatPage() {
     }}>
       {/* Header */}
       <div style={{ padding: '48px 24px 12px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <p style={{ fontSize: '11px', color: '#a78bfa', letterSpacing: '0.35em', textTransform: 'uppercase', margin: 0 }}>AI コーチ</p>
+        <p style={{ fontSize: '18px', color: '#a78bfa', fontWeight: 'bold', letterSpacing: '0.15em', margin: 0 }}>T</p>
         <a
           href="/knowledge"
           style={{ fontSize: '12px', color: '#67e8f9', padding: '4px 12px', borderRadius: '9999px', background: 'rgba(103,232,249,0.1)', textDecoration: 'none' }}
@@ -81,7 +81,7 @@ export default function ChatPage() {
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {messages.length === 0 && !sending && (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: '#64748b', fontSize: '14px', padding: '64px 32px' }}>
-            過去のジャーナルを踏まえて、<br />何でも聞いてください。
+            本音を話せ。<br />Tが真実を映し出す。
           </div>
         )}
         {messages.map(msg => (
@@ -99,7 +99,7 @@ export default function ChatPage() {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-          placeholder="今、何を考えていますか？"
+          placeholder="Tに話しかける…"
           disabled={sending}
           style={{
             flex: 1,

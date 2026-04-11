@@ -28,7 +28,7 @@ export function ChatBubble({ role, content }: ChatBubbleProps) {
         }
       >
         {!isUser && (
-          <p className="text-[10px] text-cyan-400 mb-1 tracking-wide">ALTERLOG</p>
+          <p style={{ fontSize: '11px', color: '#a78bfa', marginBottom: '4px', fontWeight: 'bold', letterSpacing: '0.1em' }}>T</p>
         )}
         {content}
       </div>
