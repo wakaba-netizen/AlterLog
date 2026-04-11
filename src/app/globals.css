@@ -1,26 +1,37 @@
-@import "tailwindcss";
+/* src/app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ── AlterLog custom animations ── */
+
+@keyframes alterlog-ripple {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(1.6); opacity: 0;   }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@keyframes alterlog-breathe {
+  0%, 100% { transform: scale(0.88); box-shadow: 0 0 8px  rgba(167, 139, 250, 0.4); }
+  50%       { transform: scale(1.12); box-shadow: 0 0 28px rgba(167, 139, 250, 0.85); }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@keyframes alterlog-pulse {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.6; transform: scale(0.92); }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes alterlog-breathe-bar {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.35); }
+  50%       { opacity: 0.7; transform: scaleY(0.65); }
+}
+
+@keyframes alterlog-fade {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1;   }
+}
+
+/* Prevent overscroll bounce on mobile */
+html, body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
 }
