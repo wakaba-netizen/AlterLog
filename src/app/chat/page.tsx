@@ -60,8 +60,15 @@ export default function ChatPage() {
   return (
     <main className="fixed inset-0 flex flex-col" style={{ background: BG, paddingBottom: '64px' }}>
       {/* Header */}
-      <div className="px-6 pt-12 pb-3 shrink-0">
+      <div className="px-6 pt-12 pb-3 shrink-0 flex items-center justify-between">
         <p className="text-xs text-purple-400 tracking-[0.35em] uppercase">AI コーチ</p>
+        <a
+          href="/knowledge"
+          className="text-xs text-cyan-400 px-3 py-1 rounded-full"
+          style={{ background: 'rgba(103,232,249,0.1)' }}
+        >
+          📚 学習フィルター
+        </a>
       </div>
 
       {/* Messages */}
