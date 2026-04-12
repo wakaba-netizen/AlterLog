@@ -52,9 +52,10 @@ export async function sendChatMessage(
   const knowledgeContext = knowledgeSources.length > 0
     ? knowledgeSources
         .map((ks, i) => {
-          const title = ks.title || `知識ソース${i + 1}`
+          const title = (ks as { title?: string; type?: string; content: string }).title || `知識ソース${i + 1}`
+          const typeLabel = (ks as { type?: string }).type === 'text' ? '★直接投入' : 'URL'
           const excerpt = ks.content.slice(0, 600)
-          return `[武器${i + 1}：${title}]\n${excerpt}`
+          return `[武器${i + 1}／${typeLabel}：${title}]\n${excerpt}`
         })
         .join('\n\n')
     : null
@@ -89,6 +90,7 @@ ${knowledgeContext ? `
 ${knowledgeContext}
 
 これらの知識を「攻めのコーチング」の武器として積極的に使え。
+★直接投入の知識は特に重要だ。ユーザーが意図的に武器庫に加えた最重要情報として優先的に使え。
 ユーザーの行動・思考がこれらの理論・教訓と矛盾していたら、具体的に引用して容赦なく突きつけろ。
 「あなたが読んだ○○によれば〜のはずだが、なぜ実行していない？」という形で使え。` : ''}
 

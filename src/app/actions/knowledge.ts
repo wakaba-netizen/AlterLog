@@ -10,7 +10,7 @@ const genai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 export interface KnowledgeSource {
   id: string
   created_at: string
-  type: 'url' | 'pdf'
+  type: 'url' | 'pdf' | 'text'
   source: string
   title: string | null
   content: string
@@ -92,4 +92,40 @@ export async function getKnowledgeSources(): Promise<KnowledgeSource[]> {
 
   if (error) throw new Error(error.message)
   return (data ?? []) as KnowledgeSource[]
+}
+
+/**
+ * テキストを直接ナレッジとして保存。
+ * タイトル未指定の場合はGeminiで30文字以内の自動生成タイトルを付ける。
+ * type='text' で保存し、T のプロンプトで「直接投入ナレッジ」として重み付けされる。
+ */
+export async function saveTextKnowledge(
+  rawText: string,
+  title?: string,
+): Promise<KnowledgeSource> {
+  const supabase = getSupabaseClient()
+
+  // タイトル自動生成（未指定時）
+  let resolvedTitle = title?.trim() || null
+  if (!resolvedTitle) {
+    const model = genai.getGenerativeModel({ model: 'gemini-2.5-flash' })
+    const result = await model.generateContent(
+      `以下のテキストの内容を30文字以内で端的にタイトル化してください。タイトルのみ返してください（説明不要）。\n\n${rawText.slice(0, 1000)}`
+    )
+    resolvedTitle = result.response.text().trim().slice(0, 40)
+  }
+
+  const { data, error } = await supabase
+    .from('knowledge_sources')
+    .insert({
+      type: 'text',
+      source: 'direct-input',
+      content: rawText,
+      title: resolvedTitle,
+    })
+    .select()
+    .single()
+
+  if (error) throw new Error(`テキスト保存失敗: ${error.message}`)
+  return data as KnowledgeSource
 }
