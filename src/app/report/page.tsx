@@ -73,16 +73,19 @@ export default function ReportPage() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: '記録数', value: `${report.entryCount}件`, color: '#0075c2' },
-              { label: '平均感情', value: `${report.avgEmotionRatio}%`, color: '#f472b6' },
-              { label: '被害者', value: `${report.avgPassiveRatio}%`, color: '#fb923c' },
-            ].map(({ label, value, color }) => (
+              { label: '記録数', value: `${report.entryCount}件`, color: '#0075c2', alarm: false },
+              { label: '平均感情', value: `${report.avgEmotionRatio}%`, color: '#eb6168', alarm: false },
+              { label: '被害者モード', value: `${report.avgPassiveRatio}%`, color: report.passiveAlarm ? '#eb6168' : '#fb923c', alarm: report.passiveAlarm },
+            ].map(({ label, value, color, alarm }) => (
               <div
                 key={label}
                 className="rounded-2xl p-3 text-center"
-                style={{ background: 'rgba(0,84,167,0.06)', border: '1px solid rgba(0,84,167,0.15)' }}
+                style={{
+                  background: alarm ? 'rgba(235,97,104,0.1)' : 'rgba(0,84,167,0.06)',
+                  border: alarm ? '1px solid rgba(235,97,104,0.4)' : '1px solid rgba(0,84,167,0.15)',
+                }}
               >
-                <p className="text-xs mb-1" style={{ color: '#5a9abf' }}>{label}</p>
+                <p className="text-xs mb-1" style={{ color: alarm ? '#eb6168' : '#5a9abf' }}>{label}</p>
                 <p className="font-bold text-lg" style={{ color }}>{value}</p>
               </div>
             ))}
@@ -111,11 +114,15 @@ export default function ReportPage() {
           {/* Growth Points */}
           {report.growthPoints.length > 0 && (
             <div>
-              <p className="text-xs mb-2" style={{ color: '#5a9abf' }}>成長ポイント</p>
+              <p className="text-xs mb-2" style={{ color: report.passiveAlarm ? '#eb6168' : '#5a9abf' }}>
+                {report.passiveAlarm ? '⚡ 直視すべき課題' : '📌 直視すべき課題'}
+              </p>
               <div className="flex flex-col gap-2">
                 {report.growthPoints.map((point, i) => (
                   <div key={i} className="flex gap-2 items-start">
-                    <span className="text-sm mt-0.5" style={{ color: '#7ec9af' }}>✓</span>
+                    <span className="text-sm mt-0.5" style={{ color: report.passiveAlarm ? '#eb6168' : '#7ec9af' }}>
+                      {report.passiveAlarm ? '⚡' : '→'}
+                    </span>
                     <p className="text-sm leading-relaxed" style={{ color: '#a8c8e0' }}>{point}</p>
                   </div>
                 ))}
@@ -126,9 +133,14 @@ export default function ReportPage() {
           {/* Next Challenge */}
           <div
             className="rounded-2xl p-4"
-            style={{ background: 'rgba(251,146,60,0.08)', border: '1px solid rgba(251,146,60,0.2)' }}
+            style={{
+              background: report.passiveAlarm ? 'rgba(235,97,104,0.1)' : 'rgba(251,146,60,0.08)',
+              border: report.passiveAlarm ? '1px solid rgba(235,97,104,0.4)' : '1px solid rgba(251,146,60,0.2)',
+            }}
           >
-            <p className="text-xs mb-2" style={{ color: '#fb923c' }}>次のチャレンジ</p>
+              <p className="text-xs mb-2" style={{ color: report.passiveAlarm ? '#eb6168' : '#fb923c' }}>
+                {report.passiveAlarm ? '🔥 Tからの最後通告' : '🎯 Tからの指令'}
+              </p>
             <p className="text-sm leading-relaxed" style={{ color: '#c8e0f4' }}>{report.nextChallenge}</p>
           </div>
         </div>
