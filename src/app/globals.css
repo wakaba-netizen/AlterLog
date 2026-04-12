@@ -34,4 +34,42 @@
 html, body {
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
+  color: #c8e0f4;
+}
+
+/* ── Global input/textarea/select reset ── */
+input, textarea, select {
+  color: #c8e0f4;
+  background: transparent;
+  -webkit-text-fill-color: #c8e0f4;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #4a7fa8;
+  -webkit-text-fill-color: #4a7fa8;
+  opacity: 1;
+}
+
+/* date input カレンダーアイコン */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.6) sepia(1) saturate(2) hue-rotate(180deg);
+}
+
+/* ── Brand color animations ── */
+@keyframes alterlog-breathe {
+  0%, 100% { transform: scale(0.88); box-shadow: 0 0 8px  rgba(0, 84, 167, 0.4); }
+  50%       { transform: scale(1.12); box-shadow: 0 0 28px rgba(0, 84, 167, 0.85); }
+}
+
+/* Warning flash keyframe */
+@keyframes t-warning-pulse {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.t-warning-flash {
+  animation: t-warning-pulse 1.2s ease-in-out forwards;
 }

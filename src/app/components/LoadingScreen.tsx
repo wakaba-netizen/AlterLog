@@ -11,16 +11,16 @@ const STEPS = [
 
 export function LoadingScreen() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-12 px-8">
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100dvh', gap: '48px', padding: '0 32px' }}>
       {/* Slow breathing waveform */}
-      <div className="flex items-end justify-center gap-[3px]" style={{ height: 80 }} aria-hidden="true">
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '3px', height: 80 }} aria-hidden="true">
         {IDLE_HEIGHTS.map((h, i) => (
           <div
             key={i}
-            className="rounded-sm"
             style={{
               width: 12,
               height: h,
+              borderRadius: '2px',
               background: '#0075c2',
               animation: `alterlog-breathe-bar 3s ease-in-out infinite`,
               animationDelay: `${i * 0.1}s`,
@@ -30,27 +30,30 @@ export function LoadingScreen() {
       </div>
 
       {/* Main message */}
-      <p
-        className="text-slate-300 text-center text-lg font-light tracking-wide"
-        style={{ animation: 'alterlog-fade 2s ease-in-out infinite' }}
-      >
+      <p style={{
+        color: '#a8c8e0',
+        textAlign: 'center',
+        fontSize: '18px',
+        fontWeight: 300,
+        letterSpacing: '0.05em',
+        animation: 'alterlog-fade 2s ease-in-out infinite',
+      }}>
         君の言葉を、僕が咀嚼している…
       </p>
 
       {/* Progress steps */}
-      <div className="flex flex-col gap-3 w-full max-w-xs">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', maxWidth: '280px' }}>
         {STEPS.map((step, i) => (
-          <div key={i} className="flex items-center gap-3 text-xs">
-            <span className={
-              step.done   ? 'text-blue-400' :
-              step.active ? 'text-slate-200'  : 'text-slate-600'
-            }>
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px' }}>
+            <span style={{
+              color: step.done ? '#4db8ff' : step.active ? '#c8e0f4' : '#3a6a9a',
+            }}>
               {step.done ? '✓' : step.active ? '●' : '○'}
             </span>
-            <span className={
-              step.done   ? 'text-slate-400 line-through' :
-              step.active ? 'text-slate-200'               : 'text-slate-600'
-            }>
+            <span style={{
+              color: step.done ? '#5a9abf' : step.active ? '#c8e0f4' : '#3a6a9a',
+              textDecoration: step.done ? 'line-through' : 'none',
+            }}>
               {step.label}
             </span>
           </div>
