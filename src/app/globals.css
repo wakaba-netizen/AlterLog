@@ -10,11 +10,6 @@
   100% { transform: scale(1.6); opacity: 0;   }
 }
 
-@keyframes alterlog-breathe {
-  0%, 100% { transform: scale(0.88); box-shadow: 0 0 8px  rgba(167, 139, 250, 0.4); }
-  50%       { transform: scale(1.12); box-shadow: 0 0 28px rgba(167, 139, 250, 0.85); }
-}
-
 @keyframes alterlog-pulse {
   0%, 100% { opacity: 1;   transform: scale(1);    }
   50%       { opacity: 0.6; transform: scale(0.92); }
