@@ -50,55 +50,50 @@ export async function GET(request: Request) {
       await resend.emails.send({
         from: 'onboarding@resend.dev',
         to: TO_EMAIL,
-        subject: `💌 過去のあなたから、手紙が届いています`,
+        subject: `【Tからの最後通牒】過去の自分から、手紙が届いています`,
         html: `
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>タイムカプセル開封</title>
 </head>
 <body style="margin:0;padding:0;background:#000811;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;">
   <div style="max-width:600px;margin:0 auto;padding:40px 24px;">
 
     <!-- Header -->
-    <div style="text-align:center;margin-bottom:40px;">
-      <p style="color:#eb6168;font-size:11px;letter-spacing:0.35em;text-transform:uppercase;margin:0 0 16px 0;">AlterLog</p>
-      <h1 style="color:#a8d8ff;font-size:24px;font-weight:bold;margin:0;line-height:1.4;">
-        過去のあなたから、<br>手紙が届いています
+    <div style="text-align:center;margin-bottom:32px;">
+      <p style="color:#eb6168;font-size:11px;letter-spacing:0.35em;text-transform:uppercase;margin:0 0 16px 0;">AlterLog / ととのう合同会社</p>
+      <h1 style="color:#c8e0f4;font-size:22px;font-weight:bold;margin:0;line-height:1.5;">
+        【Tからの最後通牒】<br>
+        <span style="color:#a8d8ff;">過去の自分から、手紙が届いています</span>
       </h1>
-      <p style="color:#5a9abf;font-size:12px;margin:16px 0 0 0;">${openDate} に書かれた手紙</p>
-    </div>
-
-    <!-- Capsule Title -->
-    <div style="background:rgba(0,84,167,0.1);border:1px solid rgba(0,84,167,0.3);border-radius:16px;padding:24px;margin-bottom:24px;">
-      <p style="color:#4db8ff;font-size:11px;letter-spacing:0.2em;margin:0 0 8px 0;">📬 タイムカプセル</p>
-      <p style="color:#c8e0f4;font-size:18px;font-weight:bold;margin:0;">${capsule.title}</p>
     </div>
 
     <!-- T message -->
-    <div style="background:rgba(235,97,104,0.08);border:1px solid rgba(235,97,104,0.2);border-radius:16px;padding:24px;margin-bottom:32px;">
-      <p style="color:#eb6168;font-size:11px;letter-spacing:0.2em;margin:0 0 12px 0;">T からの一言</p>
-      <p style="color:#c8e0f4;font-size:14px;line-height:1.8;margin:0;">
-        過去の自分が、今の自分に問いかけている。<br>
-        あの日の熱量は、まだ残っているか？<br>
-        逃げていないか。腐っていないか。<br>
-        <strong style="color:#a8d8ff;">今すぐアプリを開いて、手紙を受け取れ。</strong>
+    <div style="background:#0d0005;border:1px solid rgba(235,97,104,0.4);border-radius:16px;padding:28px;margin-bottom:24px;">
+      <p style="color:#eb6168;font-size:11px;letter-spacing:0.2em;margin:0 0 16px 0;">T（ティー）より</p>
+      <p style="color:#c8e0f4;font-size:15px;line-height:1.9;margin:0;">
+        今の自分を直視しているか？<br>
+        過去の自分からのメッセージが届いた。<br><br>
+        カプセル：<strong style="color:#a8d8ff;">「${capsule.title}」</strong><br><br>
+        今すぐアプリを開き、自分の過去と対話しろ。<br>
+        <strong style="color:#eb6168;">逃げるな。</strong>
       </p>
     </div>
 
     <!-- CTA -->
     <div style="text-align:center;margin-bottom:40px;">
       <a href="https://alter-log.vercel.app/capsule"
-         style="display:inline-block;background:linear-gradient(135deg,#0054a7,#0075c2);color:#ffffff;font-size:14px;font-weight:bold;text-decoration:none;padding:16px 40px;border-radius:50px;letter-spacing:0.05em;">
+         style="display:inline-block;background:linear-gradient(135deg,#0054a7,#0075c2);color:#ffffff;font-size:15px;font-weight:bold;text-decoration:none;padding:18px 48px;border-radius:50px;letter-spacing:0.05em;">
         手紙を開封する →
       </a>
     </div>
 
     <!-- Footer -->
-    <p style="color:#3a6a9a;font-size:11px;text-align:center;margin:0;">
-      AlterLog — ととのう合同会社
+    <p style="color:#3a6a9a;font-size:11px;text-align:center;margin:0;line-height:1.8;">
+      AlterLog — ととのう合同会社<br>
+      <span style="color:#2a4a6a;">このメールはタイムカプセルの開封日に自動送信されました</span>
     </p>
 
   </div>
