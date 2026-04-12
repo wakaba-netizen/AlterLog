@@ -88,7 +88,7 @@ export default function Home() {
 
   if (appState === 'result' && result) {
     return (
-      <main style={{ background: BG, minHeight: '100dvh' }}>
+      <main style={{ minHeight: '100dvh', position: 'relative' }}>
         <ResultScreen result={result} onReset={handleReset} />
       </main>
     )
