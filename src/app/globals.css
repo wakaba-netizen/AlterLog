@@ -73,3 +73,74 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .t-warning-flash {
   animation: t-warning-pulse 1.2s ease-in-out forwards;
 }
+
+/* === Dynamic Theme Engine Keyframes === */
+
+/* warning: 低周波パルス（2.4s周期 — 不安を煽る遅さ） */
+@keyframes warning-pulse-bg {
+  0%   { opacity: 0.55; }
+  50%  { opacity: 1.0;  }
+  100% { opacity: 0.55; }
+}
+
+/* warning: ノイズテクスチャのドリフト */
+@keyframes noise-drift {
+  0%   { transform: translate(0px, 0px) scale(1.05); }
+  25%  { transform: translate(-4px, 2px) scale(1.08); }
+  50%  { transform: translate(3px, -3px) scale(1.05); }
+  75%  { transform: translate(-2px, 4px) scale(1.07); }
+  100% { transform: translate(0px, 0px) scale(1.05); }
+}
+
+/* void: 0.15秒の全白フラッシュ（warning→totonoi 遷移時のみ） */
+@keyframes void-flash {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* totonoi: リップル波（3インスタンスで0.8s間隔発火） */
+@keyframes totonoi-ripple {
+  0%   { transform: scale(0); opacity: 0.55; }
+  100% { transform: scale(8); opacity: 0;    }
+}
+
+/* emotional indicator: totonoi グロウ */
+@keyframes indicator-glow {
+  0%, 100% { box-shadow: 0 0 6px  2px rgba(168, 216, 255, 0.4); }
+  50%       { box-shadow: 0 0 20px 6px rgba(168, 216, 255, 0.85); }
+}
+
+/* emotional indicator: warning 脈動 */
+@keyframes indicator-throb {
+  0%, 100% { box-shadow: 0 0 4px  2px rgba(235, 97, 104, 0.4); transform: scale(1);    }
+  50%       { box-shadow: 0 0 16px 6px rgba(235, 97, 104, 0.9); transform: scale(1.08); }
+}
+
+/* CSS classes used by AnimationLayer components */
+.theme-warning-pulse {
+  animation: warning-pulse-bg 2.4s ease-in-out infinite;
+}
+
+.theme-noise-drift {
+  animation: noise-drift 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.theme-void-flash {
+  animation: void-flash 0.15s ease-in-out forwards;
+}
+
+.theme-ripple {
+  animation: totonoi-ripple 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.indicator-glow {
+  animation: indicator-glow 2s ease-in-out infinite;
+}
+
+.indicator-throb {
+  animation: indicator-throb 2.4s ease-in-out infinite;
+}
