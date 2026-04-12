@@ -21,16 +21,23 @@ export async function sendChatMessage(
 ): Promise<ChatMessage> {
   const supabase = getSupabaseClient()
 
-  // 過去ログ全件取得（ロングコンテキスト活用）
-  const pastEntries = await getEntries(200)
+  // 3つの非同期処理を並列実行
+  const [pastEntries, historyResult, knowledgeResult] = await Promise.all([
+    getEntries(200),
+    supabase
+      .from('chat_messages')
+      .select('role, content')
+      .eq('session_id', sessionId)
+      .order('created_at', { ascending: true })
+      .limit(20),
+    supabase
+      .from('knowledge_sources')
+      .select('title, content')
+      .order('created_at', { ascending: false })
+      .limit(5),
+  ])
 
-  // 過去のチャット履歴取得
-  const { data: history } = await supabase
-    .from('chat_messages')
-    .select('role, content')
-    .eq('session_id', sessionId)
-    .order('created_at', { ascending: true })
-    .limit(20)
+  const history = historyResult.data
 
   const pastSummary = pastEntries
     .slice(0, 50)
@@ -39,6 +46,18 @@ export async function sendChatMessage(
       return `[${i + 1}] ${date} | ${e.thinking_profile} | 感情${e.emotion_ratio}% | ${e.transcript.slice(0, 100)}`
     })
     .join('\n')
+
+  // 学習フィルターコンテキスト構築
+  const knowledgeSources = knowledgeResult.data ?? []
+  const knowledgeContext = knowledgeSources.length > 0
+    ? knowledgeSources
+        .map((ks, i) => {
+          const title = ks.title || `知識ソース${i + 1}`
+          const excerpt = ks.content.slice(0, 600)
+          return `[武器${i + 1}：${title}]\n${excerpt}`
+        })
+        .join('\n\n')
+    : null
 
   // メンタルトリガー分析
   const hourCounts: Record<number, number[]> = {}
@@ -64,6 +83,14 @@ ${pastSummary || 'まだ記録がありません'}
 
 【メンタルトリガーパターン】
 ${triggerInsights || '分析にはもっと記録が必要です'}
+
+${knowledgeContext ? `
+【学習フィルター：ユーザーの武器庫（${knowledgeSources.length}件）】
+${knowledgeContext}
+
+これらの知識を「攻めのコーチング」の武器として積極的に使え。
+ユーザーの行動・思考がこれらの理論・教訓と矛盾していたら、具体的に引用して容赦なく突きつけろ。
+「あなたが読んだ○○によれば〜のはずだが、なぜ実行していない？」という形で使え。` : ''}
 
 【コーチングルール】
 - 褒めない。慰めない。ユーザーの醜い本音を隠さず映し出す。
