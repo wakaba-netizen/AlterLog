@@ -131,15 +131,24 @@ export default function Home() {
       </div>
 
       {/* CTA text */}
-      <p className="text-sm text-center leading-relaxed min-h-[40px] flex items-center" style={{ color: '#7aafd4' }}>
+      <p style={{
+        fontSize: '14px',
+        textAlign: 'center',
+        lineHeight: 1.6,
+        minHeight: '40px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#7aafd4',
+      }}>
         {error
           ? <span style={{ color: '#eb6168' }}>{error}</span>
           : isRecording && isNearLimit
           ? <span style={{ color: '#eb6168' }}>⚠️ あと{remainingSeconds}秒で自動停止</span>
           : isRecording && !canStop
-          ? <span style={{ color: '#a8d8ff' }}>🎙️ 録音中… <span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatTime(elapsedSeconds)}</span></span>
+          ? <span style={{ color: '#a8d8ff' }}>🎙️ 録音中… <b style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700 }}>{formatTime(elapsedSeconds)}</b></span>
           : isRecording
-          ? <span style={{ color: '#a8d8ff' }}>話し終わったら、もう一度タップ　<span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatTime(elapsedSeconds)}</span></span>
+          ? <span style={{ color: '#a8d8ff' }}>話し終わったら、もう一度タップ　<b style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700 }}>{formatTime(elapsedSeconds)}</b></span>
           : getCTA()}
       </p>
     </main>
