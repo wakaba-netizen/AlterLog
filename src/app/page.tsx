@@ -112,8 +112,8 @@ export default function Home() {
 
   return (
     <main
-      style={{ background: BG, minHeight: '100dvh' }}
-      className="flex flex-col items-center justify-between py-12 px-6"
+      style={{ background: BG, minHeight: '100dvh', paddingTop: '48px', paddingBottom: '80px', paddingLeft: '24px', paddingRight: '24px' }}
+      className="flex flex-col items-center justify-between"
     >
       {/* Logo */}
       <span className="text-xs tracking-[0.35em] uppercase select-none" style={{ color: '#eb6168' }}>
