@@ -3,9 +3,6 @@ import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { getSupabaseClient } from '@/lib/supabase'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-const TO_EMAIL = process.env.NOTIFICATION_TO_EMAIL ?? ''
-
 // This endpoint is called by Vercel Cron every morning at 9:00 JST
 // It finds capsules whose open_at date has arrived and sends email notifications
 export async function GET(request: Request) {
@@ -17,6 +14,10 @@ export async function GET(request: Request) {
   ) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  // 実行時に初期化（ビルド時にAPIキーが不要）
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const TO_EMAIL = process.env.NOTIFICATION_TO_EMAIL ?? ''
 
   const supabase = getSupabaseClient()
   const now = new Date().toISOString()

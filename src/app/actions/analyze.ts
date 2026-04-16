@@ -3,8 +3,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { getSupabaseClient } from '@/lib/supabase'
 
-// Vercel Function タイムアウトを60秒に延長（デフォルト10秒だと長い音声でタイムアウトする）
-export const maxDuration = 60
 
 const genai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
 

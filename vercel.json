@@ -4,5 +4,10 @@
       "path": "/api/capsule-notify",
       "schedule": "0 0 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "src/app/page.tsx": {
+      "maxDuration": 60
+    }
+  }
 }
