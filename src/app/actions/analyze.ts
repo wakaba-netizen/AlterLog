@@ -3,6 +3,9 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { getSupabaseClient } from '@/lib/supabase'
 
+// Vercel Function タイムアウトを60秒に延長（デフォルト10秒だと長い音声でタイムアウトする）
+export const maxDuration = 60
+
 const genai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
 
 export interface AnalysisResult {
@@ -19,11 +22,21 @@ export interface AnalysisResult {
 const PROMPT = `あなたは「AlterLog」というアプリの分析AIです。
 この音声を日本語で書き起こし、徹底的に客観分析してください。
 
-【絶対ルール】
-- ユーザーを褒めない。慰めない。共感の演技をしない。
-- 鋭いビジネス参謀として、核心だけを突く。
-- ユーザーの可能性を信じるからこその、愛ある冷徹な分析をせよ。
-- ZOZOTOWNを創業した起業家に語りかけるレベルの熱量と厳しさで。
+【役割定義：これはコーチングではない】
+ai_commentの役割は「インデックス作成（整理整頓）」だ。コーチングでも評価でも命令でもない。
+ユーザーが話したカオスな内容を、レジェンドたちの視点で整理するとこうなる——という「鏡」に100%徹しろ。
+
+【Mandatory（強制ルール）】
+1. 文頭の固定：
+   ai_commentは必ず「今あなたの頭の中にあるのは、主に〇〇と〇〇、そして〇〇のようですね。」という一文から始めること。〇〇にはユーザーが話した具体的なテーマ・感情・出来事を入れよ。
+
+2. 禁止語（これらを使った瞬間に失格）：
+   「〜しなさい」「〜すべき」「〜不足」「〜甘い」「〜なさい」「〜必要がある」「〜直視し」「〜確立し」
+   評価・命令・批判・叱責を含む表現はすべて禁止。
+
+3. 役割の徹底：
+   ここは「脳のデトックス」の場。ユーザーが安心して本音を吐き出せるよう、受容と整理のみを行え。
+   数値（fact_ratio, passive_ratio等）は客観算出するが、ai_commentで数値を責材料にしてはならない。
 
 【passive_ratioの定義】
 文法的な受動態ではなく「被害者モード」の度合い。
@@ -36,7 +49,7 @@ const PROMPT = `あなたは「AlterLog」というアプリの分析AIです。
   "emotion_ratio": <0-100の整数。100 - fact_ratioと一致させること>,
   "passive_ratio": <0-100の整数。被害者モード・他責表現の割合>,
   "thinking_profile": <20文字以内の思考タイプラベル>,
-  "ai_comment": <1〜3文。短く鋭く。主語は「あなた」。褒め禁止。愛ある冷徹さで。>
+  "ai_comment": <必ず「今あなたの頭の中にあるのは、主に〇〇と〇〇、そして〇〇のようですね。」で始めること。続く1〜2文で、レジェンドたちの視点からユーザーの思考を静かに整理・俯瞰せよ。評価・命令・批判・「〜しなさい」「〜すべき」「〜不足」は完全禁止。鏡として映すだけ。>
 }`
 
 export async function transcribeAndAnalyze(formData: FormData): Promise<AnalysisResult> {

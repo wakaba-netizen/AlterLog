@@ -6,9 +6,15 @@ import { Waveform } from '@/app/components/Waveform'
 import { RecordButton } from '@/app/components/RecordButton'
 import { LoadingScreen } from '@/app/components/LoadingScreen'
 import { ResultScreen } from '@/app/components/ResultScreen'
-import { useAudioRecorder } from '@/app/hooks/useAudioRecorder'
+import { useAudioRecorder, MAX_RECORDING_SECONDS } from '@/app/hooks/useAudioRecorder'
 import { transcribeAndAnalyze, type AnalysisResult } from '@/app/actions/analyze'
 import { getCTA } from '@/app/utils/cta'
+
+function formatTime(sec: number): string {
+  const m = Math.floor(sec / 60).toString().padStart(2, '0')
+  const s = (sec % 60).toString().padStart(2, '0')
+  return `${m}:${s}`
+}
 
 type AppState = 'idle' | 'recording' | 'loading' | 'result'
 
@@ -25,16 +31,26 @@ export default function Home() {
     isRecording,
     audioBlob,
     analyserNode,
+    elapsedSeconds,
     startRecording,
     stopRecording,
     reset: resetRecorder,
   } = useAudioRecorder()
+
+  const remainingSeconds = MAX_RECORDING_SECONDS - elapsedSeconds
+  const isNearLimit = isRecording && remainingSeconds <= 30
 
   // Trigger analysis when audioBlob becomes available after stopping
   useEffect(() => {
     if (!audioBlob || appState !== 'loading') return
 
     const run = async () => {
+      // 空Blobチェック（録音データなし）
+      if (audioBlob.size < 1000) {
+        setError('録音データが短すぎます。もう少し長く話してから停止してください')
+        setAppState('idle')
+        return
+      }
       try {
         const ext = audioBlob.type.includes('mp4') ? 'mp4' : 'webm'
         const formData = new FormData()
@@ -119,9 +135,11 @@ export default function Home() {
         {error
           ? <span style={{ color: '#eb6168' }}>{error}</span>
           : isRecording && !canStop
-          ? '🎙️ 録音中… (少し待ってから止めてね)'
+          ? <span>🎙️ 録音中… <span style={{ color: '#7aafd4', fontVariantNumeric: 'tabular-nums' }}>{formatTime(elapsedSeconds)}</span></span>
+          : isRecording && isNearLimit
+          ? <span style={{ color: '#eb6168' }}>⚠️ あと{remainingSeconds}秒で自動停止</span>
           : isRecording
-          ? '話し終わったら、もう一度タップ'
+          ? <span>話し終わったら、もう一度タップ　<span style={{ color: '#3a6a9a', fontVariantNumeric: 'tabular-nums' }}>{formatTime(elapsedSeconds)}</span></span>
           : getCTA()}
       </p>
     </main>
