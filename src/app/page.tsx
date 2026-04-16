@@ -46,8 +46,8 @@ export default function Home() {
 
     const run = async () => {
       // 空Blobチェック（録音データなし）
-      if (audioBlob.size < 1000) {
-        setError('録音データが短すぎます。もう少し長く話してから停止してください')
+      if (audioBlob.size < 5000) {
+        setError('録音が短すぎます。タップして話し始め、話し終わったらもう一度タップしてください')
         setAppState('idle')
         return
       }
@@ -134,12 +134,12 @@ export default function Home() {
       <p className="text-sm text-center leading-relaxed min-h-[40px] flex items-center" style={{ color: '#7aafd4' }}>
         {error
           ? <span style={{ color: '#eb6168' }}>{error}</span>
-          : isRecording && !canStop
-          ? <span>🎙️ 録音中… <span style={{ color: '#7aafd4', fontVariantNumeric: 'tabular-nums' }}>{formatTime(elapsedSeconds)}</span></span>
           : isRecording && isNearLimit
           ? <span style={{ color: '#eb6168' }}>⚠️ あと{remainingSeconds}秒で自動停止</span>
+          : isRecording && !canStop
+          ? <span style={{ color: '#a8d8ff' }}>🎙️ 録音中… <span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatTime(elapsedSeconds)}</span></span>
           : isRecording
-          ? <span>話し終わったら、もう一度タップ　<span style={{ color: '#3a6a9a', fontVariantNumeric: 'tabular-nums' }}>{formatTime(elapsedSeconds)}</span></span>
+          ? <span style={{ color: '#a8d8ff' }}>話し終わったら、もう一度タップ　<span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatTime(elapsedSeconds)}</span></span>
           : getCTA()}
       </p>
     </main>
