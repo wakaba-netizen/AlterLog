@@ -3,18 +3,32 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { sendChatMessage, getChatHistory, type ChatMessage } from '@/app/actions/chat'
+import { sendChatMessage, getChatHistory, type ChatMessage, type Persona, PERSONA_LABELS } from '@/app/actions/chat'
 import { ChatBubble } from '@/app/components/ChatBubble'
 
 const BG = 'linear-gradient(160deg, #000811 0%, #001525 60%, #002040 100%)'
-const SESSION_KEY = 'alterlog_chat_session'
+
+const PERSONA_COLORS: Record<Persona, { accent: string; bg: string; placeholder: string; greeting: string }> = {
+  T:        { accent: '#eb6168', bg: 'rgba(235,97,104,0.1)',  placeholder: 'Tに話しかける…',    greeting: '本音を話せ。\nTが真実を映し出す。' },
+  chikirin: { accent: '#f59e0b', bg: 'rgba(245,158,11,0.1)',  placeholder: 'ちきりんに話しかける…', greeting: 'なぜ、そう思うの？\nその前提、本当に正しい？' },
+  maezawa:  { accent: '#a855f7', bg: 'rgba(168,85,247,0.1)',  placeholder: '前澤に話しかける…',  greeting: 'それ、面白い？\nやるかやらないか、それだけ。' },
+}
+
+const PERSONAS: Persona[] = ['T', 'chikirin', 'maezawa']
+
+function getSessionKey(persona: Persona) {
+  return `alterlog_chat_session_${persona}`
+}
 
 export default function ChatPage() {
-  const [sessionId] = useState(() => {
+  const [persona, setPersona] = useState<Persona>('T')
+
+  const [sessionId, setSessionId] = useState<string>(() => {
     if (typeof window === 'undefined') return uuidv4()
-    return sessionStorage.getItem(SESSION_KEY) || (() => {
+    const key = getSessionKey('T')
+    return sessionStorage.getItem(key) || (() => {
       const id = uuidv4()
-      sessionStorage.setItem(SESSION_KEY, id)
+      sessionStorage.setItem(key, id)
       return id
     })()
   })
@@ -24,6 +38,22 @@ export default function ChatPage() {
   const [sending, setSending] = useState(false)
   const [warningFlash, setWarningFlash] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  // ペルソナ切り替え時：セッションを切り替え、履歴をリロード
+  const switchPersona = (next: Persona) => {
+    if (next === persona) return
+    setPersona(next)
+    setMessages([])
+    const key = getSessionKey(next)
+    const existing = sessionStorage.getItem(key)
+    const id = existing || (() => {
+      const newId = uuidv4()
+      sessionStorage.setItem(key, newId)
+      return newId
+    })()
+    setSessionId(id)
+    getChatHistory(id).then(setMessages)
+  }
 
   useEffect(() => {
     getChatHistory(sessionId).then(setMessages)
@@ -49,7 +79,7 @@ export default function ChatPage() {
     setMessages(prev => [...prev, optimistic])
 
     try {
-      const reply = await sendChatMessage(sessionId, text)
+      const reply = await sendChatMessage(sessionId, text, persona)
       setMessages(prev => [...prev, reply])
       // 警告フラッシュ演出
       if (reply.tone === 'warning') {
@@ -86,21 +116,50 @@ export default function ChatPage() {
         }} />
       )}
       {/* Header */}
-      <div style={{ padding: '48px 24px 12px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <p style={{ fontSize: '18px', color: '#d6003A', fontWeight: 'bold', letterSpacing: '0.15em', margin: 0 }}>T</p>
-        <a
-          href="/knowledge"
-          style={{ fontSize: '12px', color: '#0075c2', padding: '4px 12px', borderRadius: '9999px', background: 'rgba(0,117,194,0.1)', textDecoration: 'none' }}
-        >
-          📚 学習フィルター
-        </a>
+      <div style={{ padding: '48px 16px 8px', flexShrink: 0 }}>
+        {/* 上段：名前 + 学習フィルター */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+          <p style={{ fontSize: '18px', color: PERSONA_COLORS[persona].accent, fontWeight: 'bold', letterSpacing: '0.15em', margin: 0 }}>
+            {PERSONA_LABELS[persona]}
+          </p>
+          <a
+            href="/knowledge"
+            style={{ fontSize: '12px', color: '#0075c2', padding: '4px 12px', borderRadius: '9999px', background: 'rgba(0,117,194,0.1)', textDecoration: 'none' }}
+          >
+            📚 学習フィルター
+          </a>
+        </div>
+        {/* ペルソナ選択チップ */}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {PERSONAS.map(p => (
+            <button
+              key={p}
+              onClick={() => switchPersona(p)}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                fontSize: '13px',
+                fontWeight: persona === p ? 700 : 400,
+                border: `1px solid ${persona === p ? PERSONA_COLORS[p].accent : 'rgba(255,255,255,0.1)'}`,
+                background: persona === p ? PERSONA_COLORS[p].bg : 'transparent',
+                color: persona === p ? PERSONA_COLORS[p].accent : '#64748b',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+            >
+              {PERSONA_LABELS[p]}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Messages */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {messages.length === 0 && !sending && (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: '#64748b', fontSize: '14px', padding: '64px 32px' }}>
-            本音を話せ。<br />Tが真実を映し出す。
+            {PERSONA_COLORS[persona].greeting.split('\n').map((line, i) => (
+              <span key={i}>{line}{i === 0 && <br />}</span>
+            ))}
           </div>
         )}
         {messages.map(msg => (
@@ -118,7 +177,7 @@ export default function ChatPage() {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-          placeholder="Tに話しかける…"
+          placeholder={PERSONA_COLORS[persona].placeholder}
           disabled={sending}
           style={{
             flex: 1,
