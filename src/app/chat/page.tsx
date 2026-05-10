@@ -130,26 +130,30 @@ export default function ChatPage() {
           </a>
         </div>
         {/* ペルソナ選択チップ */}
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {PERSONAS.map(p => (
-            <button
-              key={p}
-              onClick={() => switchPersona(p)}
-              style={{
-                padding: '6px 16px',
-                borderRadius: '9999px',
-                fontSize: '13px',
-                fontWeight: persona === p ? 700 : 400,
-                border: `1px solid ${persona === p ? PERSONA_COLORS[p].accent : 'rgba(255,255,255,0.1)'}`,
-                background: persona === p ? PERSONA_COLORS[p].bg : 'transparent',
-                color: persona === p ? PERSONA_COLORS[p].accent : '#64748b',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-            >
-              {PERSONA_LABELS[p]}
-            </button>
-          ))}
+        <div style={{ display: 'flex', gap: '8px', paddingBottom: '4px' }}>
+          {PERSONAS.map(p => {
+            const active = persona === p
+            return (
+              <button
+                key={p}
+                onClick={() => switchPersona(p)}
+                style={{
+                  padding: '7px 18px',
+                  borderRadius: '9999px',
+                  fontSize: '13px',
+                  fontWeight: active ? 700 : 500,
+                  border: `1.5px solid ${active ? PERSONA_COLORS[p].accent : 'rgba(255,255,255,0.25)'}`,
+                  background: active ? PERSONA_COLORS[p].bg : 'rgba(255,255,255,0.05)',
+                  color: active ? PERSONA_COLORS[p].accent : '#94a3b8',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  letterSpacing: '0.02em',
+                }}
+              >
+                {PERSONA_LABELS[p]}
+              </button>
+            )
+          })}
         </div>
       </div>
 
