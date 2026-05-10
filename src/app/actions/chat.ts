@@ -16,7 +16,6 @@ export interface ChatMessage {
   tone?: 'normal' | 'warning'
 }
 
-export type { Persona }
 
 function buildSystemPrompt(
   persona: Persona,
