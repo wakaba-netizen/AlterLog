@@ -3,8 +3,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { sendChatMessage, getChatHistory, type ChatMessage, type Persona } from '@/app/actions/chat'
-import { PERSONA_LABELS } from '@/app/lib/personas'
+import { sendChatMessage, getChatHistory, type ChatMessage } from '@/app/actions/chat'
+import { PERSONA_LABELS, type Persona } from '@/app/lib/personas'
 import { ChatBubble } from '@/app/components/ChatBubble'
 
 const BG = 'linear-gradient(160deg, #000811 0%, #001525 60%, #002040 100%)'
