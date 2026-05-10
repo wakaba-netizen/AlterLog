@@ -115,14 +115,14 @@ export default function ChatPage() {
           transition: 'opacity 0.3s',
         }} />
       )}
-      {/* Header: ペルソナタブ + 学習フィルター */}
-      <div style={{ flexShrink: 0, paddingTop: '48px' }}>
-        {/* ペルソナタブバー */}
-        <div style={{
-          display: 'flex',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
-          background: 'rgba(0,0,0,0.3)',
-        }}>
+      {/* ペルソナタブバー：画面最上部に固定、白文字で確実に見える */}
+      <div style={{
+        flexShrink: 0,
+        paddingTop: '44px', // iOS safe area / ステータスバー分
+        background: '#000d1e',
+        borderBottom: `2px solid ${PERSONA_COLORS[persona].accent}`,
+      }}>
+        <div style={{ display: 'flex' }}>
           {PERSONAS.map(p => {
             const active = persona === p
             return (
@@ -131,16 +131,15 @@ export default function ChatPage() {
                 onClick={() => switchPersona(p)}
                 style={{
                   flex: 1,
-                  padding: '12px 8px',
-                  fontSize: '14px',
+                  padding: '14px 4px',
+                  fontSize: '15px',
                   fontWeight: active ? 700 : 400,
                   border: 'none',
-                  borderBottom: active ? `2px solid ${PERSONA_COLORS[p].accent}` : '2px solid transparent',
-                  background: active ? `rgba(${p === 'T' ? '235,97,104' : p === 'chikirin' ? '245,158,11' : '168,85,247'},0.12)` : 'transparent',
-                  color: active ? PERSONA_COLORS[p].accent : '#6b7280',
+                  background: active ? PERSONA_COLORS[p].bg : 'transparent',
+                  color: active ? PERSONA_COLORS[p].accent : '#ffffff',
                   cursor: 'pointer',
-                  letterSpacing: '0.05em',
-                  transition: 'all 0.15s',
+                  opacity: active ? 1 : 0.5,
+                  letterSpacing: '0.03em',
                 }}
               >
                 {PERSONA_LABELS[p]}
@@ -152,12 +151,11 @@ export default function ChatPage() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              padding: '12px 14px',
-              fontSize: '11px',
+              padding: '14px 16px',
+              fontSize: '13px',
               color: '#4b83c0',
               textDecoration: 'none',
-              borderBottom: '2px solid transparent',
-              whiteSpace: 'nowrap',
+              opacity: 0.8,
             }}
           >
             📚
