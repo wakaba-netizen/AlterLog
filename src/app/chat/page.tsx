@@ -115,22 +115,14 @@ export default function ChatPage() {
           transition: 'opacity 0.3s',
         }} />
       )}
-      {/* Header */}
-      <div style={{ padding: '48px 16px 8px', flexShrink: 0 }}>
-        {/* 上段：名前 + 学習フィルター */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <p style={{ fontSize: '18px', color: PERSONA_COLORS[persona].accent, fontWeight: 'bold', letterSpacing: '0.15em', margin: 0 }}>
-            {PERSONA_LABELS[persona]}
-          </p>
-          <a
-            href="/knowledge"
-            style={{ fontSize: '12px', color: '#0075c2', padding: '4px 12px', borderRadius: '9999px', background: 'rgba(0,117,194,0.1)', textDecoration: 'none' }}
-          >
-            📚 学習フィルター
-          </a>
-        </div>
-        {/* ペルソナ選択チップ */}
-        <div style={{ display: 'flex', gap: '8px', paddingBottom: '4px' }}>
+      {/* Header: ペルソナタブ + 学習フィルター */}
+      <div style={{ flexShrink: 0, paddingTop: '48px' }}>
+        {/* ペルソナタブバー */}
+        <div style={{
+          display: 'flex',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          background: 'rgba(0,0,0,0.3)',
+        }}>
           {PERSONAS.map(p => {
             const active = persona === p
             return (
@@ -138,22 +130,38 @@ export default function ChatPage() {
                 key={p}
                 onClick={() => switchPersona(p)}
                 style={{
-                  padding: '7px 18px',
-                  borderRadius: '9999px',
-                  fontSize: '13px',
-                  fontWeight: active ? 700 : 500,
-                  border: `1.5px solid ${active ? PERSONA_COLORS[p].accent : 'rgba(255,255,255,0.25)'}`,
-                  background: active ? PERSONA_COLORS[p].bg : 'rgba(255,255,255,0.05)',
-                  color: active ? PERSONA_COLORS[p].accent : '#94a3b8',
+                  flex: 1,
+                  padding: '12px 8px',
+                  fontSize: '14px',
+                  fontWeight: active ? 700 : 400,
+                  border: 'none',
+                  borderBottom: active ? `2px solid ${PERSONA_COLORS[p].accent}` : '2px solid transparent',
+                  background: active ? `rgba(${p === 'T' ? '235,97,104' : p === 'chikirin' ? '245,158,11' : '168,85,247'},0.12)` : 'transparent',
+                  color: active ? PERSONA_COLORS[p].accent : '#6b7280',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  letterSpacing: '0.02em',
+                  letterSpacing: '0.05em',
+                  transition: 'all 0.15s',
                 }}
               >
                 {PERSONA_LABELS[p]}
               </button>
             )
           })}
+          <a
+            href="/knowledge"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '12px 14px',
+              fontSize: '11px',
+              color: '#4b83c0',
+              textDecoration: 'none',
+              borderBottom: '2px solid transparent',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            📚
+          </a>
         </div>
       </div>
 
