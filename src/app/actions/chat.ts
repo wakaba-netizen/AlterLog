@@ -4,6 +4,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { getSupabaseClient } from '@/lib/supabase'
 import { getEntries } from '@/app/actions/entries'
+import { type Persona } from '@/app/lib/personas'
 
 const genai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
@@ -15,13 +16,7 @@ export interface ChatMessage {
   tone?: 'normal' | 'warning'
 }
 
-export type Persona = 'T' | 'chikirin' | 'maezawa'
-
-export const PERSONA_LABELS: Record<Persona, string> = {
-  T:        'T',
-  chikirin: 'ちきりん',
-  maezawa:  '前澤友作',
-}
+export type { Persona }
 
 function buildSystemPrompt(
   persona: Persona,
