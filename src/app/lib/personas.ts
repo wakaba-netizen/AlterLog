@@ -4,7 +4,7 @@
 export type Persona = 'T' | 'chikirin' | 'maezawa'
 
 export const PERSONA_LABELS: Record<Persona, string> = {
-  T:        'T',
+  T:        '糸井重里',
   chikirin: 'ちきりん',
   maezawa:  '前澤友作',
 }
