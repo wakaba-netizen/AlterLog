@@ -12,7 +12,7 @@ const BG = 'linear-gradient(160deg, #000811 0%, #001525 60%, #002040 100%)'
 type Mode = Persona | 'all'
 
 const PERSONA_COLORS: Record<Persona, { accent: string; bg: string; placeholder: string; greeting: string }> = {
-  T:        { accent: '#eb6168', bg: 'rgba(235,97,104,0.1)',  placeholder: '糸井重里に話しかける…', greeting: 'おちつけ。\nやさしく、つよく、おもしろく。' },
+  T:        { accent: '#eb6168', bg: 'rgba(235,97,104,0.1)',  placeholder: 'メンターに話しかける…', greeting: 'おちつけ。\nやさしく、つよく、おもしろく。' },
   chikirin: { accent: '#f59e0b', bg: 'rgba(245,158,11,0.1)',  placeholder: 'ちきりんに話しかける…', greeting: 'なぜ、そう思うの？\nその前提、本当に正しい？' },
   maezawa:  { accent: '#a855f7', bg: 'rgba(168,85,247,0.1)',  placeholder: '前澤に話しかける…',  greeting: 'それ、面白い？\nやるかやらないか、それだけ。' },
 }
