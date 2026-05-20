@@ -9,56 +9,97 @@ import { ChatBubble } from '@/app/components/ChatBubble'
 
 const BG = 'linear-gradient(160deg, #000811 0%, #001525 60%, #002040 100%)'
 
+type Mode = Persona | 'all'
+
 const PERSONA_COLORS: Record<Persona, { accent: string; bg: string; placeholder: string; greeting: string }> = {
   T:        { accent: '#eb6168', bg: 'rgba(235,97,104,0.1)',  placeholder: 'Tに話しかける…',    greeting: '本音を話せ。\nTが真実を映し出す。' },
   chikirin: { accent: '#f59e0b', bg: 'rgba(245,158,11,0.1)',  placeholder: 'ちきりんに話しかける…', greeting: 'なぜ、そう思うの？\nその前提、本当に正しい？' },
   maezawa:  { accent: '#a855f7', bg: 'rgba(168,85,247,0.1)',  placeholder: '前澤に話しかける…',  greeting: 'それ、面白い？\nやるかやらないか、それだけ。' },
 }
 
+const ALL_CONFIG = {
+  accent: '#22d3ee',
+  bg: 'rgba(34,211,238,0.1)',
+  placeholder: '3人に話しかける…',
+  greeting: '3人が一斉に返答します。\n遠慮なく話しかけてください。',
+}
+
 const PERSONAS: Persona[] = ['T', 'chikirin', 'maezawa']
+const MODES: Mode[] = ['T', 'chikirin', 'maezawa', 'all']
+
+// モード表示設定
+function getModeConfig(mode: Mode) {
+  if (mode === 'all') return ALL_CONFIG
+  return PERSONA_COLORS[mode]
+}
+function getModeLabel(mode: Mode) {
+  if (mode === 'all') return '全員'
+  return PERSONA_LABELS[mode]
+}
+
+// LocalChatMessage: persona情報付き
+interface LocalChatMessage extends ChatMessage {
+  personaLabel?: string
+  personaAccent?: string
+}
 
 function getSessionKey(persona: Persona) {
   return `alterlog_chat_session_${persona}`
 }
 
+function getOrCreateSession(persona: Persona): string {
+  const key = getSessionKey(persona)
+  const existing = sessionStorage.getItem(key)
+  if (existing) return existing
+  const id = uuidv4()
+  sessionStorage.setItem(key, id)
+  return id
+}
+
 export default function ChatPage() {
-  const [persona, setPersona] = useState<Persona>('T')
+  const [mode, setMode] = useState<Mode>('T')
 
   const [sessionId, setSessionId] = useState<string>(() => {
     if (typeof window === 'undefined') return uuidv4()
-    const key = getSessionKey('T')
-    return sessionStorage.getItem(key) || (() => {
-      const id = uuidv4()
-      sessionStorage.setItem(key, id)
-      return id
-    })()
+    return getOrCreateSession('T')
   })
 
-  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [messages, setMessages] = useState<LocalChatMessage[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const [warningFlash, setWarningFlash] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  // ペルソナ切り替え時：セッションを切り替え、履歴をリロード
-  const switchPersona = (next: Persona) => {
-    if (next === persona) return
-    setPersona(next)
+  // モード切り替え
+  const switchMode = (next: Mode) => {
+    if (next === mode) return
+    setMode(next)
     setMessages([])
-    const key = getSessionKey(next)
-    const existing = sessionStorage.getItem(key)
-    const id = existing || (() => {
-      const newId = uuidv4()
-      sessionStorage.setItem(key, newId)
-      return newId
-    })()
+    if (next === 'all') {
+      // 全員モードはhistoryを読み込まない（3セッション統合は複雑なので省略）
+      return
+    }
+    const id = getOrCreateSession(next)
     setSessionId(id)
-    getChatHistory(id).then(setMessages)
+    getChatHistory(id).then(msgs =>
+      setMessages(msgs.map(m => ({
+        ...m,
+        personaLabel: PERSONA_LABELS[next],
+        personaAccent: PERSONA_COLORS[next].accent,
+      })))
+    )
   }
 
   useEffect(() => {
-    getChatHistory(sessionId).then(setMessages)
-  }, [sessionId])
+    if (mode === 'all') return
+    getChatHistory(sessionId).then(msgs =>
+      setMessages(msgs.map(m => ({
+        ...m,
+        personaLabel: PERSONA_LABELS[mode as Persona],
+        personaAccent: PERSONA_COLORS[mode as Persona].accent,
+      })))
+    )
+  }, [sessionId, mode])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -70,29 +111,59 @@ export default function ChatPage() {
     setInput('')
     setSending(true)
 
-    // 楽観的UI更新
-    const optimistic: ChatMessage = {
+    const optimisticUser: LocalChatMessage = {
       id: 'tmp-' + Date.now(),
       role: 'user',
       content: text,
       created_at: new Date().toISOString(),
     }
-    setMessages(prev => [...prev, optimistic])
+    setMessages(prev => [...prev, optimisticUser])
 
     try {
-      const reply = await sendChatMessage(sessionId, text, persona)
-      setMessages(prev => [...prev, reply])
-      // 警告フラッシュ演出
-      if (reply.tone === 'warning') {
-        setWarningFlash(true)
-        setTimeout(() => setWarningFlash(false), 1200)
+      if (mode === 'all') {
+        // 3人に並列送信
+        const sessionT = getOrCreateSession('T')
+        const sessionChikirin = getOrCreateSession('chikirin')
+        const sessionMaezawa = getOrCreateSession('maezawa')
+
+        const [replyChikirin, replyMaezawa, replyT] = await Promise.all([
+          sendChatMessage(sessionChikirin, text, 'chikirin'),
+          sendChatMessage(sessionMaezawa, text, 'maezawa'),
+          sendChatMessage(sessionT, text, 'T'),
+        ])
+
+        const ts = Date.now()
+        setMessages(prev => [
+          ...prev,
+          { ...replyChikirin, id: 'chikirin-' + ts, personaLabel: 'ちきりん', personaAccent: PERSONA_COLORS.chikirin.accent },
+          { ...replyMaezawa,  id: 'maezawa-'  + ts, personaLabel: '前澤友作', personaAccent: PERSONA_COLORS.maezawa.accent },
+          { ...replyT,        id: 'T-'        + ts, personaLabel: 'T',       personaAccent: PERSONA_COLORS.T.accent },
+        ])
+
+        // warning flash（どれかがwarningなら）
+        if (replyT.tone === 'warning' || replyChikirin.tone === 'warning' || replyMaezawa.tone === 'warning') {
+          setWarningFlash(true)
+          setTimeout(() => setWarningFlash(false), 1200)
+        }
+      } else {
+        const reply = await sendChatMessage(sessionId, text, mode as Persona)
+        setMessages(prev => [
+          ...prev,
+          { ...reply, personaLabel: PERSONA_LABELS[mode as Persona], personaAccent: PERSONA_COLORS[mode as Persona].accent },
+        ])
+        if (reply.tone === 'warning') {
+          setWarningFlash(true)
+          setTimeout(() => setWarningFlash(false), 1200)
+        }
       }
     } catch {
-      setMessages(prev => prev.filter(m => m.id !== optimistic.id))
+      setMessages(prev => prev.filter(m => m.id !== optimisticUser.id))
     } finally {
       setSending(false)
     }
   }
+
+  const currentConfig = getModeConfig(mode)
 
   return (
     <main style={{
@@ -104,7 +175,7 @@ export default function ChatPage() {
       background: BG,
       overflow: 'hidden',
     }}>
-      {/* 警告フラッシュオーバーレイ */}
+      {/* 警告フラッシュ */}
       {warningFlash && (
         <div style={{
           position: 'absolute',
@@ -112,38 +183,38 @@ export default function ChatPage() {
           background: 'rgba(235, 97, 104, 0.18)',
           zIndex: 100,
           pointerEvents: 'none',
-          animation: 'none',
-          transition: 'opacity 0.3s',
         }} />
       )}
-      {/* ペルソナタブバー：画面最上部に固定、白文字で確実に見える */}
+
+      {/* タブバー */}
       <div style={{
         flexShrink: 0,
-        paddingTop: '44px', // iOS safe area / ステータスバー分
+        paddingTop: '44px',
         background: '#000d1e',
-        borderBottom: `2px solid ${PERSONA_COLORS[persona].accent}`,
+        borderBottom: `2px solid ${currentConfig.accent}`,
       }}>
         <div style={{ display: 'flex' }}>
-          {PERSONAS.map(p => {
-            const active = persona === p
+          {MODES.map(m => {
+            const active = mode === m
+            const cfg = getModeConfig(m)
             return (
               <button
-                key={p}
-                onClick={() => switchPersona(p)}
+                key={m}
+                onClick={() => switchMode(m)}
                 style={{
                   flex: 1,
                   padding: '14px 4px',
-                  fontSize: '15px',
+                  fontSize: m === 'all' ? '13px' : '15px',
                   fontWeight: active ? 700 : 400,
                   border: 'none',
-                  background: active ? PERSONA_COLORS[p].bg : 'transparent',
-                  color: active ? PERSONA_COLORS[p].accent : '#ffffff',
+                  background: active ? cfg.bg : 'transparent',
+                  color: active ? cfg.accent : '#ffffff',
                   cursor: 'pointer',
                   opacity: active ? 1 : 0.5,
                   letterSpacing: '0.03em',
                 }}
               >
-                {PERSONA_LABELS[p]}
+                {getModeLabel(m)}
               </button>
             )
           })}
@@ -152,7 +223,7 @@ export default function ChatPage() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              padding: '14px 16px',
+              padding: '14px 12px',
               fontSize: '13px',
               color: '#4b83c0',
               textDecoration: 'none',
@@ -168,16 +239,41 @@ export default function ChatPage() {
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {messages.length === 0 && !sending && (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: '#64748b', fontSize: '14px', padding: '64px 32px' }}>
-            {PERSONA_COLORS[persona].greeting.split('\n').map((line, i) => (
+            {currentConfig.greeting.split('\n').map((line, i) => (
               <span key={i}>{line}{i === 0 && <br />}</span>
             ))}
           </div>
         )}
         {messages.map(msg => (
-          <ChatBubble key={msg.id} role={msg.role} content={msg.content} tone={msg.tone} />
+          <ChatBubble
+            key={msg.id}
+            role={msg.role}
+            content={msg.content}
+            tone={msg.tone}
+            personaLabel={msg.personaLabel}
+            personaAccent={msg.personaAccent}
+          />
         ))}
-        {sending && (
-          <ChatBubble role="assistant" content="…" />
+        {sending && mode !== 'all' && (
+          <ChatBubble
+            role="assistant"
+            content="…"
+            personaLabel={PERSONA_LABELS[mode as Persona]}
+            personaAccent={PERSONA_COLORS[mode as Persona]?.accent}
+          />
+        )}
+        {sending && mode === 'all' && (
+          <>
+            {PERSONAS.map(p => (
+              <ChatBubble
+                key={p}
+                role="assistant"
+                content="…"
+                personaLabel={PERSONA_LABELS[p]}
+                personaAccent={PERSONA_COLORS[p].accent}
+              />
+            ))}
+          </>
         )}
         <div ref={bottomRef} />
       </div>
@@ -188,7 +284,7 @@ export default function ChatPage() {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-          placeholder={PERSONA_COLORS[persona].placeholder}
+          placeholder={currentConfig.placeholder}
           disabled={sending}
           style={{
             flex: 1,
