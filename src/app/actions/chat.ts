@@ -165,7 +165,7 @@ export async function sendChatMessage(
   const pastSummary = pastEntries
     .slice(0, 50)
     .map((e, i) => {
-      const date = new Date(e.created_at).toLocaleDateString('ja-JP')
+      const date = new Date(e.created_at).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' })
       return `[${i + 1}] ${date} | ${e.thinking_profile} | 感情${e.emotion_ratio}% | ${e.transcript.slice(0, 100)}`
     })
     .join('\n')
@@ -186,7 +186,7 @@ export async function sendChatMessage(
   // メンタルトリガー分析
   const hourCounts: Record<number, number[]> = {}
   pastEntries.forEach(e => {
-    const hour = new Date(e.created_at).getHours()
+    const hour = new Date(new Date(e.created_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })).getHours()
     if (!hourCounts[hour]) hourCounts[hour] = []
     hourCounts[hour].push(e.emotion_ratio)
   })
