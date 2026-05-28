@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { sendChatMessage, getChatHistory, type ChatMessage } from '@/app/actions/chat'
+import { sendChatMessage, getChatHistory, sendGroupDiscussion, type ChatMessage } from '@/app/actions/chat'
 import { PERSONA_LABELS, type Persona } from '@/app/lib/personas'
 import { ChatBubble } from '@/app/components/ChatBubble'
 
@@ -121,30 +121,29 @@ export default function ChatPage() {
 
     try {
       if (mode === 'all') {
-        // 3人に並列送信
-        const sessionT = getOrCreateSession('T')
-        const sessionChikirin = getOrCreateSession('chikirin')
-        const sessionMaezawa = getOrCreateSession('maezawa')
-
-        const [replyChikirin, replyMaezawa, replyT] = await Promise.all([
-          sendChatMessage(sessionChikirin, text, 'chikirin'),
-          sendChatMessage(sessionMaezawa, text, 'maezawa'),
-          sendChatMessage(sessionT, text, 'T'),
-        ])
-
+        // 3人討議モード
+        const turns = await sendGroupDiscussion(text)
         const ts = Date.now()
-        setMessages(prev => [
-          ...prev,
-          { ...replyChikirin, id: 'chikirin-' + ts, personaLabel: 'ちきりん', personaAccent: PERSONA_COLORS.chikirin.accent },
-          { ...replyMaezawa,  id: 'maezawa-'  + ts, personaLabel: '前澤友作', personaAccent: PERSONA_COLORS.maezawa.accent },
-          { ...replyT,        id: 'T-'        + ts, personaLabel: 'T',       personaAccent: PERSONA_COLORS.T.accent },
-        ])
 
-        // warning flash（どれかがwarningなら）
-        if (replyT.tone === 'warning' || replyChikirin.tone === 'warning' || replyMaezawa.tone === 'warning') {
-          setWarningFlash(true)
-          setTimeout(() => setWarningFlash(false), 1200)
+        const PERSONA_CONFIG: Record<string, { label: string; accent: string }> = {
+          '糸井重里': { label: '糸井重里', accent: PERSONA_COLORS.T.accent },
+          'ちきりん': { label: 'ちきりん', accent: PERSONA_COLORS.chikirin.accent },
+          '前澤':     { label: '前澤友作', accent: PERSONA_COLORS.maezawa.accent },
+          '最終提案': { label: '💡 最終提案', accent: '#22d3ee' },
         }
+
+        const newMessages = turns.map((turn, i) => {
+          const cfg = PERSONA_CONFIG[turn.persona] ?? { label: turn.persona, accent: '#64748b' }
+          return {
+            id: `group-${ts}-${i}`,
+            role: 'assistant' as const,
+            content: turn.content,
+            created_at: new Date().toISOString(),
+            personaLabel: cfg.label,
+            personaAccent: cfg.accent,
+          }
+        })
+        setMessages(prev => [...prev, ...newMessages])
       } else {
         const reply = await sendChatMessage(sessionId, text, mode as Persona)
         setMessages(prev => [
@@ -263,17 +262,12 @@ export default function ChatPage() {
           />
         )}
         {sending && mode === 'all' && (
-          <>
-            {PERSONAS.map(p => (
-              <ChatBubble
-                key={p}
-                role="assistant"
-                content="…"
-                personaLabel={PERSONA_LABELS[p]}
-                personaAccent={PERSONA_COLORS[p].accent}
-              />
-            ))}
-          </>
+          <ChatBubble
+            role="assistant"
+            content="3人が討議中…"
+            personaLabel="💬 討議中"
+            personaAccent="#22d3ee"
+          />
         )}
         <div ref={bottomRef} />
       </div>

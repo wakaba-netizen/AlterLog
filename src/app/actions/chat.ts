@@ -247,6 +247,99 @@ export async function sendChatMessage(
   return { ...(saved as ChatMessage), tone: isWarning ? 'warning' : 'normal' }
 }
 
+// 3人討議モード
+export interface DiscussionTurn {
+  persona: string  // '糸井重里' | 'ちきりん' | '前澤' | '最終提案'
+  content: string
+}
+
+export async function sendGroupDiscussion(
+  userMessage: string,
+): Promise<DiscussionTurn[]> {
+  const supabase = getSupabaseClient()
+
+  const [pastEntries, knowledgeResult] = await Promise.all([
+    getEntries(200),
+    supabase
+      .from('knowledge_sources')
+      .select('title, content')
+      .order('created_at', { ascending: false })
+      .limit(5),
+  ])
+
+  const pastSummary = pastEntries
+    .slice(0, 50)
+    .map((e, i) => {
+      const date = new Date(e.created_at).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' })
+      return `[${i + 1}] ${date} | ${e.thinking_profile} | 感情${e.emotion_ratio}% | ${e.transcript.slice(0, 100)}`
+    })
+    .join('\n')
+
+  const knowledgeSources = knowledgeResult.data ?? []
+  const knowledgeContext = knowledgeSources.length > 0
+    ? knowledgeSources.map((ks, i) => {
+        const title = (ks as { title?: string; content: string }).title || `知識ソース${i + 1}`
+        return `[武器${i + 1}：${title}]\n${ks.content.slice(0, 600)}`
+      }).join('\n\n')
+    : ''
+
+  const systemPrompt = `あなたは「糸井重里」「ちきりん」「前澤友作」の3人がリアルな会話形式で議論するシミュレーションを生成します。
+ユーザー「wakaba」の相談に対し、3人が互いに反応・反論・賛同しながら議論し、最後にwakabaへの具体的な提案をまとめてください。
+
+【wakabaの過去ジャーナル（最新50件）】
+${pastSummary || 'まだ記録がありません'}
+
+${knowledgeContext ? `【武器庫（知識ソース）】\n${knowledgeContext}` : ''}
+
+【各ペルソナの特徴・口調】
+糸井重里：「やさしく・つよく・おもしろく」を軸に連歌のように発想を飛ばす。口癖「おちつけ」「試しにやってみる」「いいこと、考えたっ！」「それ、室町時代の人でもいいと思うか？」一人称「ぼく」。柔らかく本質を突く。
+ちきりん：ロジックと構造で詰める。前提を疑い矛盾を容赦なく突く。口癖「そんじゃーね！」「気色悪っ！」「自分のアタマで考えよう」「だから何なの？」一人称「あたし」。
+前澤友作：「それ、楽しい？」が全ての判断軸。競争より独自性。失敗談（ZOZOSUIT・ZOZOARIGATO・人切りの後悔）を引用。口癖「とにかく驚かせたい」「競争なんてしなくていいじゃん」一人称「僕」。
+
+【出力フォーマット（厳守）】
+以下のマーカーのみで各発言を区切ること。マーカー以外の前置き・説明文は一切禁止。
+
+[糸井重里]
+（発言内容）
+
+[ちきりん]
+（発言内容）
+
+[前澤]
+（発言内容）
+
+（3人が互いの発言に明示的に反応し合い、計5〜8ターン繰り返す）
+
+[最終提案]
+（3人の議論を踏まえたwakabaへの具体的な提案。箇条書き可）
+
+【討議ルール】
+- 各発言150〜300字
+- 必ず「糸井さんが言ったように」「ちきりんの言う通り」「いや、それは違う」等、互いの発言に明示的に反応すること
+- 最後は必ず[最終提案]で締めること
+- wakabaの過去ジャーナルや武器庫の知識を積極的に引用すること`
+
+  const model = genai.getGenerativeModel({
+    model: 'gemini-2.5-flash',
+    systemInstruction: systemPrompt,
+  })
+
+  const result = await model.generateContent(userMessage)
+  const text = result.response.text()
+
+  // [マーカー] で分割してパース
+  const turns: DiscussionTurn[] = []
+  const parts = text.split(/(\[(?:糸井重里|ちきりん|前澤|最終提案)\])/)
+  for (let i = 1; i < parts.length; i += 2) {
+    const marker = parts[i]
+    const content = parts[i + 1]?.trim()
+    const persona = marker.slice(1, -1)
+    if (content) turns.push({ persona, content })
+  }
+
+  return turns.length > 0 ? turns : [{ persona: '最終提案', content: text.trim() }]
+}
+
 export async function getChatHistory(sessionId: string): Promise<ChatMessage[]> {
   const supabase = getSupabaseClient()
   const { data, error } = await supabase
