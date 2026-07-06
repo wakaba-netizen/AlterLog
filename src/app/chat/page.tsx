@@ -49,10 +49,10 @@ function getSessionKey(persona: Persona) {
 
 function getOrCreateSession(persona: Persona): string {
   const key = getSessionKey(persona)
-  const existing = sessionStorage.getItem(key)
+  const existing = localStorage.getItem(key)
   if (existing) return existing
   const id = uuidv4()
-  sessionStorage.setItem(key, id)
+  localStorage.setItem(key, id)
   return id
 }
 
