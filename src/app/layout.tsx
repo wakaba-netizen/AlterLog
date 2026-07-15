@@ -3,6 +3,10 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { BottomNav } from '@/app/components/BottomNav'
 
+// 音声分析（Server Action）が長い録音でタイムアウトしないよう、
+// サーバー関数の最大実行時間を60秒（Vercel Hobbyの上限）に設定
+export const maxDuration = 60
+
 export const metadata: Metadata = {
   title: 'AlterLog',
   description: '音声ジャーナリング × 自己客観視',
