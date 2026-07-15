@@ -3,7 +3,8 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 
-export const MAX_RECORDING_SECONDS = 300 // 5分
+export const MAX_RECORDING_SECONDS = 420 // 7分
+export const WARNING_BEFORE_SECONDS = 60 // 残り1分で警告
 
 export interface AudioRecorderState {
   isRecording: boolean

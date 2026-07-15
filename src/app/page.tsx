@@ -6,7 +6,7 @@ import { Waveform } from '@/app/components/Waveform'
 import { RecordButton } from '@/app/components/RecordButton'
 import { LoadingScreen } from '@/app/components/LoadingScreen'
 import { ResultScreen } from '@/app/components/ResultScreen'
-import { useAudioRecorder, MAX_RECORDING_SECONDS } from '@/app/hooks/useAudioRecorder'
+import { useAudioRecorder, MAX_RECORDING_SECONDS, WARNING_BEFORE_SECONDS } from '@/app/hooks/useAudioRecorder'
 import { transcribeAndAnalyze, type AnalysisResult } from '@/app/actions/analyze'
 import { getCTA } from '@/app/utils/cta'
 
@@ -38,7 +38,7 @@ export default function Home() {
   } = useAudioRecorder()
 
   const remainingSeconds = MAX_RECORDING_SECONDS - elapsedSeconds
-  const isNearLimit = isRecording && remainingSeconds <= 30
+  const isNearLimit = isRecording && remainingSeconds <= WARNING_BEFORE_SECONDS
 
   // Trigger analysis when audioBlob becomes available after stopping
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function Home() {
         {error
           ? <span style={{ color: '#eb6168' }}>{error}</span>
           : isRecording && isNearLimit
-          ? <span style={{ color: '#eb6168' }}>⚠️ あと{remainingSeconds}秒で自動停止</span>
+          ? <span style={{ color: '#eb6168' }}>⚠️ あと<b style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700 }}>{formatTime(remainingSeconds)}</b>で自動停止</span>
           : isRecording && !canStop
           ? <span style={{ color: '#a8d8ff' }}>🎙️ 録音中… <b style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700 }}>{formatTime(elapsedSeconds)}</b></span>
           : isRecording
