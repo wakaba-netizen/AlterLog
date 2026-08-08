@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { sendChatMessage, getChatHistory, sendGroupDiscussion, type ChatMessage } from '@/app/actions/chat'
 import { PERSONA_LABELS, type Persona } from '@/app/lib/personas'
+import { parseDiscussion, DISCUSSION_PERSONA_CONFIG } from '@/app/lib/discussion'
 import { ChatBubble } from '@/app/components/ChatBubble'
 
 const BG = 'linear-gradient(160deg, #000811 0%, #001525 60%, #002040 100%)'
@@ -43,17 +44,48 @@ interface LocalChatMessage extends ChatMessage {
   personaAccent?: string
 }
 
-function getSessionKey(persona: Persona) {
-  return `alterlog_chat_session_${persona}`
+function getSessionKey(mode: Mode) {
+  return `alterlog_chat_session_${mode}`
 }
 
-function getOrCreateSession(persona: Persona): string {
-  const key = getSessionKey(persona)
+function getOrCreateSession(mode: Mode): string {
+  const key = getSessionKey(mode)
   const existing = localStorage.getItem(key)
   if (existing) return existing
   const id = uuidv4()
   localStorage.setItem(key, id)
   return id
+}
+
+// 履歴（生メッセージ）を表示用バブルに変換
+// 全員モードのアシスタント発言は討議テキストなので複数ターンに展開する
+function toDisplayMessages(msgs: ChatMessage[], mode: Mode): LocalChatMessage[] {
+  if (mode !== 'all') {
+    return msgs.map(m => ({
+      ...m,
+      personaLabel: PERSONA_LABELS[mode as Persona],
+      personaAccent: PERSONA_COLORS[mode as Persona].accent,
+    }))
+  }
+  const out: LocalChatMessage[] = []
+  for (const m of msgs) {
+    if (m.role === 'user') {
+      out.push({ ...m })
+      continue
+    }
+    parseDiscussion(m.content).forEach((turn, i) => {
+      const cfg = DISCUSSION_PERSONA_CONFIG[turn.persona] ?? { label: turn.persona, accent: '#64748b' }
+      out.push({
+        id: `${m.id}-${i}`,
+        role: 'assistant',
+        content: turn.content,
+        created_at: m.created_at,
+        personaLabel: cfg.label,
+        personaAccent: cfg.accent,
+      })
+    })
+  }
+  return out
 }
 
 export default function ChatPage() {
@@ -70,35 +102,20 @@ export default function ChatPage() {
   const [warningFlash, setWarningFlash] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  // モード切り替え
+  // モード切り替え：セッションを切り替えるだけ。履歴読み込みはeffectが担当
   const switchMode = (next: Mode) => {
     if (next === mode) return
     setMode(next)
     setMessages([])
-    if (next === 'all') {
-      // 全員モードはhistoryを読み込まない（3セッション統合は複雑なので省略）
-      return
-    }
-    const id = getOrCreateSession(next)
-    setSessionId(id)
-    getChatHistory(id).then(msgs =>
-      setMessages(msgs.map(m => ({
-        ...m,
-        personaLabel: PERSONA_LABELS[next],
-        personaAccent: PERSONA_COLORS[next].accent,
-      })))
-    )
+    setSessionId(getOrCreateSession(next))
   }
 
   useEffect(() => {
-    if (mode === 'all') return
-    getChatHistory(sessionId).then(msgs =>
-      setMessages(msgs.map(m => ({
-        ...m,
-        personaLabel: PERSONA_LABELS[mode as Persona],
-        personaAccent: PERSONA_COLORS[mode as Persona].accent,
-      })))
-    )
+    let cancelled = false
+    getChatHistory(sessionId).then(msgs => {
+      if (!cancelled) setMessages(toDisplayMessages(msgs, mode))
+    })
+    return () => { cancelled = true }
   }, [sessionId, mode])
 
   useEffect(() => {
@@ -121,19 +138,11 @@ export default function ChatPage() {
 
     try {
       if (mode === 'all') {
-        // 3人討議モード
-        const turns = await sendGroupDiscussion(text)
+        // 3人討議モード（討議はsessionIdに紐づけて保存される）
+        const turns = await sendGroupDiscussion(sessionId, text)
         const ts = Date.now()
-
-        const PERSONA_CONFIG: Record<string, { label: string; accent: string }> = {
-          '糸井重里': { label: '糸井重里', accent: PERSONA_COLORS.T.accent },
-          'ちきりん': { label: 'ちきりん', accent: PERSONA_COLORS.chikirin.accent },
-          '前澤':     { label: '前澤友作', accent: PERSONA_COLORS.maezawa.accent },
-          '最終提案': { label: '💡 最終提案', accent: '#22d3ee' },
-        }
-
         const newMessages = turns.map((turn, i) => {
-          const cfg = PERSONA_CONFIG[turn.persona] ?? { label: turn.persona, accent: '#64748b' }
+          const cfg = DISCUSSION_PERSONA_CONFIG[turn.persona] ?? { label: turn.persona, accent: '#64748b' }
           return {
             id: `group-${ts}-${i}`,
             role: 'assistant' as const,

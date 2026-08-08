@@ -5,6 +5,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { getSupabaseClient } from '@/lib/supabase'
 import { getEntries } from '@/app/actions/entries'
 import { type Persona } from '@/app/lib/personas'
+import { parseDiscussion, type DiscussionTurn } from '@/app/lib/discussion'
 
 const genai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
@@ -248,12 +249,8 @@ export async function sendChatMessage(
 }
 
 // 3人討議モード
-export interface DiscussionTurn {
-  persona: string  // '糸井重里' | 'ちきりん' | '前澤' | '最終提案'
-  content: string
-}
-
 export async function sendGroupDiscussion(
+  sessionId: string,
   userMessage: string,
 ): Promise<DiscussionTurn[]> {
   const supabase = getSupabaseClient()
@@ -331,17 +328,14 @@ ${knowledgeContext ? `【武器庫（知識ソース）】\n${knowledgeContext}`
   const result = await model.generateContent(userMessage)
   const text = result.response.text()
 
-  // [マーカー] で分割してパース
-  const turns: DiscussionTurn[] = []
-  const parts = text.split(/(\[(?:糸井重里|ちきりん|前澤|最終提案)\])/)
-  for (let i = 1; i < parts.length; i += 2) {
-    const marker = parts[i]
-    const content = parts[i + 1]?.trim()
-    const persona = marker.slice(1, -1)
-    if (content) turns.push({ persona, content })
-  }
+  // 履歴保存：ユーザーメッセージ＋討議の生テキスト（マーカー付き）を保存
+  // 生テキストで保存し、読み込み時に parseDiscussion で再構築する
+  await supabase.from('chat_messages').insert([
+    { session_id: sessionId, role: 'user', content: userMessage },
+    { session_id: sessionId, role: 'assistant', content: text },
+  ])
 
-  return turns.length > 0 ? turns : [{ persona: '最終提案', content: text.trim() }]
+  return parseDiscussion(text)
 }
 
 export async function getChatHistory(sessionId: string): Promise<ChatMessage[]> {
