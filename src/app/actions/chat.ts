@@ -167,7 +167,8 @@ export async function sendChatMessage(
     .slice(0, 50)
     .map((e, i) => {
       const date = new Date(e.created_at).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' })
-      return `[${i + 1}] ${date} | ${e.thinking_profile} | 感情${e.emotion_ratio}% | ${e.transcript.slice(0, 100)}`
+      const source = e.image_url ? '📷手書き' : '🎙️音声'
+      return `[${i + 1}] ${date} | ${source} | ${e.thinking_profile} | 感情${e.emotion_ratio}% | ${e.transcript.slice(0, 100)}`
     })
     .join('\n')
 
@@ -268,7 +269,8 @@ export async function sendGroupDiscussion(
     .slice(0, 50)
     .map((e, i) => {
       const date = new Date(e.created_at).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' })
-      return `[${i + 1}] ${date} | ${e.thinking_profile} | 感情${e.emotion_ratio}% | ${e.transcript.slice(0, 100)}`
+      const source = e.image_url ? '📷手書き' : '🎙️音声'
+      return `[${i + 1}] ${date} | ${source} | ${e.thinking_profile} | 感情${e.emotion_ratio}% | ${e.transcript.slice(0, 100)}`
     })
     .join('\n')
 

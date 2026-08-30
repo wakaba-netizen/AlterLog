@@ -12,6 +12,7 @@ export interface EntryRow {
   passive_ratio: number
   thinking_profile: string
   ai_comment: string
+  image_url?: string | null
 }
 
 export async function getEntries(limit = 100): Promise<EntryRow[]> {

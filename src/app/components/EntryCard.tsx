@@ -37,7 +37,27 @@ export function EntryCard({ entry, onClick }: EntryCardProps) {
         </span>
       </div>
       <p className="text-sm font-medium mb-1" style={{ color: '#4db8ff' }}>{entry.thinking_profile}</p>
-      <p className="text-xs line-clamp-2" style={{ color: '#7aafd4' }}>{entry.transcript}</p>
+      <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+        {entry.image_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={entry.image_url}
+            alt="手書きジャーナル"
+            style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '8px',
+              objectFit: 'cover',
+              border: '1px solid rgba(0,84,167,0.3)',
+              flexShrink: 0,
+            }}
+          />
+        )}
+        <p className="text-xs line-clamp-2" style={{ color: '#7aafd4', flex: 1 }}>
+          {entry.image_url && <span style={{ color: '#4db8ff', marginRight: '4px' }}>📷</span>}
+          {entry.transcript}
+        </p>
+      </div>
     </button>
   )
 }

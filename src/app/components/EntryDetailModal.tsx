@@ -78,9 +78,28 @@ export function EntryDetailModal({ entry, onClose }: EntryDetailModalProps) {
           <p className="text-sm leading-relaxed" style={{ color: '#c8e0f4' }}>{entry.ai_comment}</p>
         </div>
 
+        {/* 手書き画像 */}
+        {entry.image_url && (
+          <div>
+            <p className="text-xs mb-2" style={{ color: '#5a9abf' }}>📷 手書き原本</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={entry.image_url}
+              alt="手書きジャーナル原本"
+              style={{
+                width: '100%',
+                borderRadius: '12px',
+                border: '1px solid rgba(0,84,167,0.3)',
+              }}
+            />
+          </div>
+        )}
+
         {/* Transcript */}
         <div>
-          <p className="text-xs mb-2" style={{ color: '#5a9abf' }}>書き起こし</p>
+          <p className="text-xs mb-2" style={{ color: '#5a9abf' }}>
+            {entry.image_url ? '読み取ったテキスト' : '書き起こし'}
+          </p>
           <p className="text-sm leading-relaxed" style={{ color: '#a8c8e0' }}>{entry.transcript}</p>
         </div>
       </div>
