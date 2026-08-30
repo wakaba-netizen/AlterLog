@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { getEntries, type EntryRow } from '@/app/actions/entries'
 import { EntryCard } from '@/app/components/EntryCard'
 import { EntryDetailModal } from '@/app/components/EntryDetailModal'
+import { StreakHeader } from '@/app/components/StreakHeader'
 
 const BG = 'linear-gradient(160deg, #000811 0%, #001525 60%, #002040 100%)'
 
@@ -25,6 +26,11 @@ export default function HistoryPage() {
       <h1 className="text-xs tracking-[0.35em] uppercase mb-6" style={{ color: '#4db8ff' }}>
         ジャーナル履歴
       </h1>
+
+      {/* 継続ステータス */}
+      <div className="flex justify-center mb-6">
+        <StreakHeader />
+      </div>
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center text-sm" style={{ color: '#5a9abf' }}>

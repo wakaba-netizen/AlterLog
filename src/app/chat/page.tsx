@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { sendChatMessage, getChatHistory, sendGroupDiscussion, type ChatMessage } from '@/app/actions/chat'
 import { PERSONA_LABELS, type Persona } from '@/app/lib/personas'
 import { parseDiscussion, DISCUSSION_PERSONA_CONFIG } from '@/app/lib/discussion'
+import { getStreakData } from '@/app/actions/streak'
 import { ChatBubble } from '@/app/components/ChatBubble'
 
 const BG = 'linear-gradient(160deg, #000811 0%, #001525 60%, #002040 100%)'
@@ -100,7 +101,13 @@ export default function ChatPage() {
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const [warningFlash, setWarningFlash] = useState(false)
+  const [todayDone, setTodayDone] = useState<boolean | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  // 本日の録音済み判定（Tの挨拶を催促文言に切り替えるため）
+  useEffect(() => {
+    getStreakData().then(d => setTodayDone(d.todayDone)).catch(() => setTodayDone(null))
+  }, [])
 
   // モード切り替え：セッションを切り替えるだけ。履歴読み込みはeffectが担当
   const switchMode = (next: Mode) => {
@@ -172,6 +179,11 @@ export default function ChatPage() {
   }
 
   const currentConfig = getModeConfig(mode)
+
+  // 本日未録音なら、T（糸井重里）の挨拶をデトックス催促文言に切り替える
+  const greeting = (mode === 'T' && todayDone === false)
+    ? 'おちつけ。\n今日の思考のデトックスが、まだ終わっていないぞ。'
+    : currentConfig.greeting
 
   return (
     <main style={{
@@ -247,7 +259,7 @@ export default function ChatPage() {
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {messages.length === 0 && !sending && (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', color: '#64748b', fontSize: '14px', padding: '64px 32px' }}>
-            {currentConfig.greeting.split('\n').map((line, i) => (
+            {greeting.split('\n').map((line, i) => (
               <span key={i}>{line}{i === 0 && <br />}</span>
             ))}
           </div>

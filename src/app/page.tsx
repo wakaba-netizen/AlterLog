@@ -9,6 +9,7 @@ import { ResultScreen } from '@/app/components/ResultScreen'
 import { useAudioRecorder, MAX_RECORDING_SECONDS, WARNING_BEFORE_SECONDS } from '@/app/hooks/useAudioRecorder'
 import { transcribeAndAnalyze, type AnalysisResult } from '@/app/actions/analyze'
 import { getCTA } from '@/app/utils/cta'
+import { StreakHeader } from '@/app/components/StreakHeader'
 
 function formatTime(sec: number): string {
   const m = Math.floor(sec / 60).toString().padStart(2, '0')
@@ -115,10 +116,13 @@ export default function Home() {
       style={{ background: BG, minHeight: '100dvh', paddingTop: '48px', paddingBottom: '80px', paddingLeft: '24px', paddingRight: '24px' }}
       className="flex flex-col items-center justify-between"
     >
-      {/* Logo */}
-      <span className="text-xs tracking-[0.35em] uppercase select-none" style={{ color: '#eb6168' }}>
-        AlterLog
-      </span>
+      {/* Logo + 継続ステータス */}
+      <div className="flex flex-col items-center gap-5 w-full">
+        <span className="text-xs tracking-[0.35em] uppercase select-none" style={{ color: '#eb6168' }}>
+          AlterLog
+        </span>
+        <StreakHeader />
+      </div>
 
       {/* Center: waveform + button */}
       <div className="flex flex-col items-center gap-10">

@@ -25,6 +25,12 @@
   50%       { opacity: 1;   }
 }
 
+/* 本日未達成バッジの点滅（赤いリングが脈打つ） */
+@keyframes streak-today-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(235,97,104,0.55); }
+  50%       { box-shadow: 0 0 0 5px rgba(235,97,104,0); }
+}
+
 /* Prevent overscroll bounce on mobile */
 html, body {
   overscroll-behavior: none;
