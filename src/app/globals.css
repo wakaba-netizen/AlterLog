@@ -31,6 +31,45 @@
   50%       { box-shadow: 0 0 0 5px rgba(235,97,104,0); }
 }
 
+/* ── セレンディピティ（閃き）演出 ── */
+/* 閃きバナーの浮遊＋発光 */
+@keyframes spark-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+@keyframes spark-glow {
+  0%, 100% { box-shadow: 0 0 16px 2px rgba(245,158,11,0.35), 0 0 4px rgba(255,215,122,0.5) inset; }
+  50%       { box-shadow: 0 0 28px 6px rgba(245,158,11,0.6),  0 0 8px rgba(255,215,122,0.7) inset; }
+}
+/* モーダル暗転フェードイン */
+@keyframes spark-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+/* ノード出現 */
+@keyframes spark-node-pop {
+  0%   { opacity: 0; transform: scale(0.6); }
+  60%  { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+/* 2ノードを繋ぐ線が伸びる */
+@keyframes spark-line-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+/* 線上を走る光の粒 */
+@keyframes spark-dot-travel {
+  0%   { top: 0%;   opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+/* スパークカードのせり上がり */
+@keyframes spark-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* Prevent overscroll bounce on mobile */
 html, body {
   overscroll-behavior: none;

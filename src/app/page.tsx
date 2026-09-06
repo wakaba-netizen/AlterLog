@@ -11,6 +11,7 @@ import { transcribeAndAnalyze, analyzeImageJournal, type AnalysisResult } from '
 import { getCTA } from '@/app/utils/cta'
 import { resizeImage } from '@/app/utils/image'
 import { StreakHeader } from '@/app/components/StreakHeader'
+import { SparkBanner } from '@/app/components/SparkBanner'
 
 function formatTime(sec: number): string {
   const m = Math.floor(sec / 60).toString().padStart(2, '0')
@@ -245,6 +246,7 @@ export default function Home() {
           AlterLog
         </span>
         <StreakHeader />
+        <SparkBanner />
       </div>
 
       {/* Center: waveform + button */}

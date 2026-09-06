@@ -109,6 +109,17 @@ export default function ChatPage() {
     getStreakData().then(d => setTodayDone(d.todayDone)).catch(() => setTodayDone(null))
   }, [])
 
+  // 閃きバナーから遷移してきた場合、スパークの文脈を入力欄に引き継ぐ
+  useEffect(() => {
+    try {
+      const sparkPrompt = localStorage.getItem('alterlog_spark_prompt')
+      if (sparkPrompt) {
+        setInput(sparkPrompt)
+        localStorage.removeItem('alterlog_spark_prompt')
+      }
+    } catch {}
+  }, [])
+
   // モード切り替え：セッションを切り替えるだけ。履歴読み込みはeffectが担当
   const switchMode = (next: Mode) => {
     if (next === mode) return
