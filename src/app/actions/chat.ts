@@ -3,7 +3,7 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { getSupabaseClient } from '@/lib/supabase'
-import { getEntries } from '@/app/actions/entries'
+import { getEntries, type EntryRow } from '@/app/actions/entries'
 import { type Persona } from '@/app/lib/personas'
 import { parseDiscussion, type DiscussionTurn } from '@/app/lib/discussion'
 
@@ -18,13 +18,67 @@ export interface ChatMessage {
 }
 
 
+// ── 伏線回収（思考のタイムトラベル）：過去ログの関連度検索 ──
+
+// 日本語向けの軽量類似度：文字bi-gramの重なりで算出（形態素解析不要）
+function bigrams(s: string): string[] {
+  const t = (s || '').replace(/\s+/g, '').toLowerCase()
+  const out: string[] = []
+  for (let i = 0; i < t.length - 1; i++) out.push(t.slice(i, i + 2))
+  return out
+}
+
+// クエリのbi-gramが過去ログにどれだけ含まれるか（0〜1）
+function similarity(query: string, text: string): number {
+  const q = new Set(bigrams(query))
+  if (q.size === 0) return 0
+  const t = new Set(bigrams(text))
+  let hit = 0
+  for (const b of q) if (t.has(b)) hit++
+  return hit / q.size
+}
+
+// 現在のメッセージに関連する「30日以上前」の過去ログを最大3件抽出し、
+// [過去の伏線データ]ブロック（データ＋回収ルール）を組み立てる。関連が無ければ空文字。
+function buildForeshadowBlock(userMessage: string, entries: EntryRow[]): string {
+  const now = Date.now()
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000
+
+  const candidates = entries
+    .filter(e => now - new Date(e.created_at).getTime() >= THIRTY_DAYS)
+    .map(e => ({ e, score: similarity(userMessage, e.transcript) }))
+    .filter(x => x.score >= 0.08) // ノイズ除去のしきい値
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+
+  if (candidates.length === 0) return ''
+
+  const lines = candidates.map(({ e }) => {
+    const date = new Date(e.created_at).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' })
+    const months = Math.max(1, Math.floor((now - new Date(e.created_at).getTime()) / THIRTY_DAYS))
+    const source = e.image_url ? '手書き' : '音声'
+    return `- ${date}（約${months}ヶ月前）／${source}／「${(e.transcript || '').slice(0, 150)}」`
+  }).join('\n')
+
+  return `
+【過去の伏線データ（現在の相談と関連する30日以上前の記録）】
+${lines}
+
+【伏線回収ルール（重要・最優先）】
+上記[過去の伏線データ]に現在の悩みと同じテーマの記録がある場合、必ずそれを引き合いに出すこと。
+「そういえばお前、〇月〇日（約〇ヶ月前）のノートでも、まったく同じことで足踏みしてたぞ」と、
+日付と何ヶ月前かを具体的に示し、同じ思考のループにハマっている事実を突きつけ、ループを断ち切らせろ。
+※表現はあなた自身の口調・人格に合わせること（丁寧に諭す／鋭く詰める等）。`
+}
+
 function buildSystemPrompt(
   persona: Persona,
   pastSummary: string,
   pastEntriesCount: number,
   triggerInsights: string,
   knowledgeContext: string | null,
-  knowledgeSources: { title?: string; type?: string; content: string }[]
+  knowledgeSources: { title?: string; type?: string; content: string }[],
+  foreshadowBlock: string = ''
 ): string {
   const journalSection = `
 【ユーザーの過去ジャーナル（最新${Math.min(pastEntriesCount, 50)}件）】
@@ -49,6 +103,7 @@ ${knowledgeContext}
 - 口癖：「そんじゃーね！」「自分のアタマで考えよう」「だから何なの？」「気色悪っ！」
 
 ${journalSection}
+${foreshadowBlock}
 ${knowledgeSection}
 
 【思考・行動指針】
@@ -80,6 +135,7 @@ ${knowledgeSection}
 - 口癖：「それ、楽しい？」「競争なんてしなくていいじゃん」「ソウゾウ（想像/創造）のナナメウエを行こうよ」「世界中をカッコよく、世界中に笑顔を」「とにかく驚かせたいんだよね」
 
 ${journalSection}
+${foreshadowBlock}
 ${knowledgeSection}
 
 【OS：美学・価値観】
@@ -116,6 +172,7 @@ ${knowledgeSection}
 - 口癖：「やさしく、つよく、おもしろく。」「試しにやってみる」「いいこと、考えたっ！」「それ、室町時代の人でもいいと思うか？」「おちつけ」
 
 ${journalSection}
+${foreshadowBlock}
 ${knowledgeSection}
 
 【思考・行動指針】
@@ -200,13 +257,17 @@ export async function sendChatMessage(
     })
     .join(', ')
 
+  // 伏線回収：現在のメッセージに関連する30日以上前の過去ログを抽出
+  const foreshadowBlock = buildForeshadowBlock(userMessage, pastEntries)
+
   const systemPrompt = buildSystemPrompt(
     persona,
     pastSummary,
     pastEntries.length,
     triggerInsights,
     knowledgeContext,
-    knowledgeSources
+    knowledgeSources,
+    foreshadowBlock
   )
 
   const model = genai.getGenerativeModel({
@@ -282,6 +343,9 @@ export async function sendGroupDiscussion(
       }).join('\n\n')
     : ''
 
+  // 伏線回収：現在の相談に関連する30日以上前の過去ログ
+  const foreshadowBlock = buildForeshadowBlock(userMessage, pastEntries)
+
   const systemPrompt = `あなたは「糸井重里」「ちきりん」「前澤友作」の3人がリアルな会話形式で議論するシミュレーションを生成します。
 ユーザー「wakaba」の相談に対し、3人が互いに反応・反論・賛同しながら議論し、最後にwakabaへの具体的な提案をまとめてください。
 
@@ -289,6 +353,7 @@ export async function sendGroupDiscussion(
 ${pastSummary || 'まだ記録がありません'}
 
 ${knowledgeContext ? `【武器庫（知識ソース）】\n${knowledgeContext}` : ''}
+${foreshadowBlock}
 
 【各ペルソナの特徴・口調】
 糸井重里：「やさしく・つよく・おもしろく」を軸に連歌のように発想を飛ばす。口癖「おちつけ」「試しにやってみる」「いいこと、考えたっ！」「それ、室町時代の人でもいいと思うか？」一人称「ぼく」。柔らかく本質を突く。
