@@ -29,8 +29,8 @@ describe('transcribeAndAnalyze', () => {
   beforeEach(() => {
     vi.resetModules()
     vi.stubEnv('GEMINI_API_KEY', 'test-gemini-key')
-    vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co')
-    vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'test-anon')
+    vi.stubEnv('SUPABASE_URL', 'https://test.supabase.co')
+    vi.stubEnv('SUPABASE_ANON_KEY', 'test-anon')
 
     mockGenerateContent.mockResolvedValue({
       response: {
