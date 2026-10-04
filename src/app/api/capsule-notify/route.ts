@@ -85,7 +85,7 @@ export async function GET(request: Request) {
 
     <!-- CTA -->
     <div style="text-align:center;margin-bottom:40px;">
-      <a href="https://alter-log.vercel.app/capsule"
+      <a href="https://alter-log-liard.vercel.app/capsule"
          style="display:inline-block;background:linear-gradient(135deg,#0054a7,#0075c2);color:#ffffff;font-size:15px;font-weight:bold;text-decoration:none;padding:18px 48px;border-radius:50px;letter-spacing:0.05em;">
         手紙を開封する →
       </a>

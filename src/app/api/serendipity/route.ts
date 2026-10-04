@@ -44,7 +44,7 @@ export async function GET(request: Request) {
       <p style="color:#c8e0f4;font-size:15px;line-height:1.9;margin:0;">${spark.spark_text}</p>
     </div>
     <div style="text-align:center;margin-bottom:40px;">
-      <a href="https://alter-log.vercel.app/"
+      <a href="https://alter-log-liard.vercel.app/"
          style="display:inline-block;background:linear-gradient(135deg,#f59e0b,#ffd77a);color:#000811;font-size:15px;font-weight:bold;text-decoration:none;padding:18px 48px;border-radius:50px;letter-spacing:0.05em;">
         今すぐ開け →
       </a>
